@@ -10,6 +10,7 @@ using BookSmart.ViewModels;
 
 namespace BookSmart.Controllers
 {
+    [Route("Book")]
     public class BookController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,7 +22,7 @@ namespace BookSmart.Controllers
 
         public async Task<ActionResult<IEnumerable<Book>>> Index()
         {
-            var books = await _context.Books.Include(b=>b.Genre).ToListAsync();
+            var books = await _context.Books.Include(b => b.Genre).ToListAsync();
 
             return View(books);
         }
@@ -38,7 +39,7 @@ namespace BookSmart.Controllers
 
             return View(viewModel);
         }
-        
+
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(BookFormViewModel model)
@@ -64,7 +65,7 @@ namespace BookSmart.Controllers
         [HttpGet("Delete/{id?}")]
         public async Task<ActionResult> Delete(int? id)
         {
-            if(id==null || id == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
@@ -91,9 +92,54 @@ namespace BookSmart.Controllers
             }
 
             _context.Books.Remove(book);
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        [HttpGet("Update/{id?}")]
+        public async Task<ActionResult<BookFormViewModel>> Update(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var book = await _context.Books.FindAsync(id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            var genres = await _context.Genres.ToListAsync();
+
+            var viewModel = new BookFormViewModel
+            {
+                Book = book,
+                Genres = genres
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost("Update/{id?}")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Update(BookFormViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Book book = viewModel.Book;
+
+                _context.Books.Update(book);
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(viewModel);
         }
     }
 }
