@@ -1,43 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookSmart.Models;
-using BookSmart.Data;
-using Microsoft.EntityFrameworkCore;
 using BookSmart.ViewModels;
+using BookSmart.Interfaces;
 
 namespace BookSmart.Controllers
 {
     [Route("Book")]
     public class BookController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BookController(ApplicationDbContext context)
+        public BookController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ActionResult<IEnumerable<Book>>> Index()
         {
-            var books = await _context.Books.Include(b => b.Genre).ToListAsync();
-
-            return View(books);
+            using (_unitOfWork)
+            {
+                var books = await _unitOfWork.Books.GetBooksWithGenresAsync();
+                return View(books);
+            }
         }
 
         [HttpGet("Create")]
-        public async Task<ActionResult<BookFormViewModel>> Create()
+        public ActionResult<BookFormViewModel> Create()
         {
-            var genres = await _context.Genres.ToListAsync();
-
-            var viewModel = new BookFormViewModel
+            using (_unitOfWork)
             {
-                Genres = genres
-            };
+                var genres = _unitOfWork.Genres.GetAll().ToList();
 
-            return View(viewModel);
+                var viewModel = new BookFormViewModel
+                {
+                    Genres = genres
+                };
+                return View(viewModel);
+            }
         }
 
         [HttpPost("Create")]
@@ -54,46 +56,55 @@ namespace BookSmart.Controllers
                     GenreId = model.Book.GenreId
                 };
 
-                _context.Books.Add(book);
+                using(_unitOfWork)
+                {
+                    _unitOfWork.Books.Add(book);
 
-                await _context.SaveChangesAsync();
+                    await _unitOfWork.CompleteAsync();
+                }
             }
 
             return RedirectToAction("Index");
         }
 
         [HttpGet("Delete/{id?}")]
-        public async Task<ActionResult> Delete(int? id)
+        public async Task<ActionResult<Book>> Delete(int? id)
         {
             if (id == null || id == 0)
             {
                 return NotFound();
             }
 
-            var book = await _context.Books.Include(b => b.Genre).FirstOrDefaultAsync(b => b.Id == id);
-
-            if (book == null)
+            using (_unitOfWork)
             {
-                return NotFound();
-            }
+                var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
 
-            return View(book);
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                return View(book);
+            }
         }
 
         [HttpPost("Delete/{id?}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteBook(int? id)
+        public async Task<ActionResult> DeleteBook(int? id)
         {
-            var book = await _context.Books.FindAsync(id);
-
-            if (book == null)
+            using (_unitOfWork)
             {
-                return NotFound();
+                var book = _unitOfWork.Books.Get(id);
+
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                _unitOfWork.Books.Remove(book);
+
+                await _unitOfWork.CompleteAsync();
             }
-
-            _context.Books.Remove(book);
-
-            await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
         }
@@ -106,22 +117,25 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var book = await _context.Books.FindAsync(id);
-
-            if (book == null)
+            using (_unitOfWork)
             {
-                return NotFound();
+                var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
+
+                if (book == null)
+                {
+                    return NotFound();
+                }
+
+                var genres = _unitOfWork.Genres.GetAll().ToList();
+
+                var viewModel = new BookFormViewModel
+                {
+                    Book = book,
+                    Genres = genres
+                };
+
+                return View(viewModel);
             }
-
-            var genres = await _context.Genres.ToListAsync();
-
-            var viewModel = new BookFormViewModel
-            {
-                Book = book,
-                Genres = genres
-            };
-
-            return View(viewModel);
         }
 
         [HttpPost("Update/{id?}")]
@@ -130,11 +144,19 @@ namespace BookSmart.Controllers
         {
             if (ModelState.IsValid)
             {
-                Book book = viewModel.Book;
+                Book updatedBook = viewModel.Book;
 
-                _context.Books.Update(book);
+                using (_unitOfWork)
+                {
+                    var book = _unitOfWork.Books.Get(updatedBook.Id);
 
-                await _context.SaveChangesAsync();
+                    book.Name = updatedBook.Name;
+                    book.Author = updatedBook.Author;
+                    book.Price = updatedBook.Price;
+                    book.GenreId = updatedBook.GenreId;
+
+                    await _unitOfWork.CompleteAsync();
+                }
 
                 return RedirectToAction("Index");
             }
