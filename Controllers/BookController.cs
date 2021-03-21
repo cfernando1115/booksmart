@@ -20,26 +20,20 @@ namespace BookSmart.Controllers
 
         public async Task<ActionResult<IEnumerable<Book>>> Index()
         {
-            using (_unitOfWork)
-            {
-                var books = await _unitOfWork.Books.GetBooksWithGenresAsync();
-                return View(books);
-            }
+            var books = await _unitOfWork.Books.GetBooksWithGenresAsync();
+            return View(books);
         }
 
         [HttpGet("Create")]
         public ActionResult<BookFormViewModel> Create()
         {
-            using (_unitOfWork)
-            {
-                var genres = _unitOfWork.Genres.GetAll().ToList();
+            var genres = _unitOfWork.Genres.GetAll().ToList();
 
-                var viewModel = new BookFormViewModel
-                {
-                    Genres = genres
-                };
-                return View(viewModel);
-            }
+            var viewModel = new BookFormViewModel
+            {
+                Genres = genres
+            };
+            return View(viewModel);
         }
 
         [HttpPost("Create")]
@@ -56,12 +50,9 @@ namespace BookSmart.Controllers
                     GenreId = model.Book.GenreId
                 };
 
-                using(_unitOfWork)
-                {
-                    _unitOfWork.Books.Add(book);
+                _unitOfWork.Books.Add(book);
 
-                    await _unitOfWork.CompleteAsync();
-                }
+                await _unitOfWork.CompleteAsync();
             }
 
             return RedirectToAction("Index");
@@ -75,36 +66,30 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            using (_unitOfWork)
+            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
+
+            if (book == null)
             {
-                var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
-
-                if (book == null)
-                {
-                    return NotFound();
-                }
-
-                return View(book);
+                return NotFound();
             }
+
+            return View(book);
         }
 
         [HttpPost("Delete/{id?}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteBook(int? id)
         {
-            using (_unitOfWork)
+            var book = _unitOfWork.Books.Get(id);
+
+            if (book == null)
             {
-                var book = _unitOfWork.Books.Get(id);
-
-                if (book == null)
-                {
-                    return NotFound();
-                }
-
-                _unitOfWork.Books.Remove(book);
-
-                await _unitOfWork.CompleteAsync();
+                return NotFound();
             }
+
+            _unitOfWork.Books.Remove(book);
+
+            await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("Index");
         }
@@ -117,25 +102,22 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            using (_unitOfWork)
+            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
+
+            if (book == null)
             {
-                var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
-
-                if (book == null)
-                {
-                    return NotFound();
-                }
-
-                var genres = _unitOfWork.Genres.GetAll().ToList();
-
-                var viewModel = new BookFormViewModel
-                {
-                    Book = book,
-                    Genres = genres
-                };
-
-                return View(viewModel);
+                return NotFound();
             }
+
+            var genres = _unitOfWork.Genres.GetAll().ToList();
+
+            var viewModel = new BookFormViewModel
+            {
+                Book = book,
+                Genres = genres
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost("Update/{id?}")]
@@ -146,17 +128,14 @@ namespace BookSmart.Controllers
             {
                 Book updatedBook = viewModel.Book;
 
-                using (_unitOfWork)
-                {
-                    var book = _unitOfWork.Books.Get(updatedBook.Id);
+                var book = _unitOfWork.Books.Get(updatedBook.Id);
 
-                    book.Name = updatedBook.Name;
-                    book.Author = updatedBook.Author;
-                    book.Price = updatedBook.Price;
-                    book.GenreId = updatedBook.GenreId;
+                book.Name = updatedBook.Name;
+                book.Author = updatedBook.Author;
+                book.Price = updatedBook.Price;
+                book.GenreId = updatedBook.GenreId;
 
-                    await _unitOfWork.CompleteAsync();
-                }
+                await _unitOfWork.CompleteAsync();
 
                 return RedirectToAction("Index");
             }

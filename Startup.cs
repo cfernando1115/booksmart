@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BookSmart.Extensions;
+using Microsoft.AspNetCore.Identity;
+using BookSmart.Data;
+using BookSmart.Models;
 
 namespace BookSmart
 {
@@ -20,6 +23,7 @@ namespace BookSmart
         {
             services.AddControllersWithViews();
             services.AddApplicationServices(_configuration);
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +43,8 @@ namespace BookSmart
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

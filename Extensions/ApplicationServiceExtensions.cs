@@ -18,6 +18,7 @@ namespace BookSmart.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();
 
             return services;
         }
