@@ -8,7 +8,7 @@ namespace BookSmart.Models
 {
     public class SeedData
     {
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static void InitializeMembershipTypes(IServiceProvider serviceProvider)
         {
             using var context = new ApplicationDbContext(
                 serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
@@ -41,6 +41,72 @@ namespace BookSmart.Models
                     Name = "The Pandemic",
                     BooksPerYear = 36,
                     DiscountPercentage = 40,
+                }
+            );
+            context.SaveChanges();
+        }
+
+        public static void InitializeGenres(IServiceProvider serviceProvider)
+        {
+            using var context = new ApplicationDbContext(
+                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
+            if (context.Genres.Any())
+            {
+                return;
+            }
+
+            context.Genres.AddRange(
+                new Genre
+                {
+                    Name = "History"
+                },
+                new Genre
+                {
+                    Name = "Literature"
+                },
+                new Genre
+                {
+                    Name = "True Crime"
+                },
+                new Genre
+                {
+                    Name = "Biography"
+                },
+                new Genre
+                {
+                    Name = "Kids"
+                },
+                new Genre
+                {
+                    Name = "Romance"
+                },
+                new Genre
+                {
+                    Name = "Travel"
+                },
+                new Genre
+                {
+                    Name = "Comic"
+                },
+                new Genre
+                {
+                    Name = "Science Fiction"
+                },
+                new Genre
+                {
+                    Name = "Mystery"
+                },
+                new Genre
+                {
+                    Name = "Young Adult"
+                },
+                new Genre
+                {
+                    Name = "Fantasy"
+                },
+                new Genre
+                {
+                    Name = "Thriller"
                 }
             );
             context.SaveChanges();

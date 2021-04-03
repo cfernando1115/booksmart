@@ -1,0 +1,10 @@
+﻿@model IEnumerable<BookSmart.Models.Member>
+
+<div class="container">
+    @foreach (var member in Model)
+    {
+        <div>@member.Name</div>
+        <div>@member.BooksRemaining</div>
+    }
+</div>
+

@@ -7,6 +7,7 @@ using BookSmart.Extensions;
 using Microsoft.AspNetCore.Identity;
 using BookSmart.Data;
 using BookSmart.Models;
+using BookSmart.Services;
 
 namespace BookSmart
 {
@@ -22,8 +23,18 @@ namespace BookSmart
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
             services.AddApplicationServices(_configuration);
-            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddIdentity<ApplicationUser, AppRole>()
+                .AddRoles<AppRole>()
+                .AddRoleManager<RoleManager<AppRole>>()
+                .AddSignInManager<SignInManager<ApplicationUser>>()
+                .AddRoleValidator<RoleValidator<AppRole>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

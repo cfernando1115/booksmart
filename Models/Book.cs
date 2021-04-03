@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
 namespace BookSmart.Models
 {
@@ -17,6 +18,9 @@ namespace BookSmart.Models
 
         [Required]
         public float Price { get; set; }
+
+        [Required]
+        public DateTime DateAdded { get; set; } = DateTime.Today;
 
         [ForeignKey("GenreId")]
         public Genre Genre { get; set; }

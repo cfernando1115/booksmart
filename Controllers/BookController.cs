@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using BookSmart.Models;
 using BookSmart.ViewModels;
 using BookSmart.Interfaces;
+using BookSmart.Extensions;
+using System;
 
 namespace BookSmart.Controllers
 {
@@ -22,6 +24,16 @@ namespace BookSmart.Controllers
         {
             var books = await _unitOfWork.Books.GetBooksWithGenresAsync();
             return View(books);
+        }
+
+        [HttpGet("Featured")]
+        public async Task<ActionResult<IEnumerable<Book>>> Featured()
+        {
+            var user = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
+
+            var newBooks = await _unitOfWork.BookService.GetBooksAfterDate(user.LastLogin ?? DateTime.Today);
+
+            return View(newBooks);
         }
 
         [HttpGet("Create")]

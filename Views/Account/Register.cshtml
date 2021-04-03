@@ -47,7 +47,7 @@
             <label class="col-md-2" asp-for="MembershipTypeId"></label>
             <div class="col-md-10">
                 <select asp-for="MembershipTypeId" class="form-control" asp-items="@(new SelectList(Model.MembershipTypes, "Id", "Name"))">
-                    <option selected value="">--Select Membership Type--</option>
+                    <option selected value=" ">--Select Membership Type--</option>
                 </select>
             </div>
         </div>

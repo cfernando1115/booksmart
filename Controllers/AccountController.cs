@@ -2,10 +2,15 @@
 using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
+using BookSmart.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BookSmart.Controllers
 {
@@ -14,11 +19,11 @@ namespace BookSmart.Controllers
     {
         UserManager<ApplicationUser> _userManager;
         SignInManager<ApplicationUser> _signInManger;
-        RoleManager<IdentityRole> _roleManager;
+        RoleManager<AppRole> _roleManager;
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public AccountController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
+        public AccountController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<AppRole> roleManager)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -42,6 +47,13 @@ namespace BookSmart.Controllers
 
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByEmailAsync(loginModel.Email);
+
+                    if (await _userManager.IsInRoleAsync(user, Utility.RoleHelper.Member))
+                    {
+                        return RedirectToAction("Featured", "Book");
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -55,8 +67,8 @@ namespace BookSmart.Controllers
         {
             if (!_roleManager.RoleExistsAsync(Utility.RoleHelper.Admin).GetAwaiter().GetResult())
             {
-                await _roleManager.CreateAsync(new IdentityRole(Utility.RoleHelper.Admin));
-                await _roleManager.CreateAsync(new IdentityRole(Utility.RoleHelper.Member));
+                await _roleManager.CreateAsync(new AppRole { Name = Utility.RoleHelper.Admin });
+                await _roleManager.CreateAsync(new AppRole { Name = Utility.RoleHelper.Member });
             }
             var membershipTypes = _unitOfWork.MembershipTypes.GetAll().ToList();
 
@@ -73,13 +85,29 @@ namespace BookSmart.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
+                ApplicationUser user;
+                if(registerModel.RoleName == Utility.RoleHelper.Member)
                 {
-                    UserName = registerModel.Email,
-                    Email = registerModel.Email,
-                    Name = registerModel.Name,
-                    MembershipTypeId = registerModel.MembershipTypeId
-                };
+                    var membershipType = _unitOfWork.MembershipTypes.Get(registerModel.MembershipTypeId);
+                    user = new Member
+                    {
+                        UserName = registerModel.Email,
+                        Email = registerModel.Email,
+                        Name = registerModel.Name,
+                        MembershipTypeId = registerModel.MembershipTypeId,
+                        BooksRemaining = membershipType.BooksPerYear
+                    };
+                }
+                else
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = registerModel.Email,
+                        Email = registerModel.Email,
+                        Name = registerModel.Name
+                    };
+                }
+
 
                 var result = await _userManager.CreateAsync(user, registerModel.Password);
 
@@ -95,12 +123,21 @@ namespace BookSmart.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
             }
+
+            registerModel.MembershipTypes = _unitOfWork.MembershipTypes.GetAll().ToList();
             return View(registerModel);
         }
 
         [HttpPost("Logout")]
         public async Task<ActionResult> Logout()
         {
+            if (User.IsInRole(Utility.RoleHelper.Member))
+            {
+                var member = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
+                member.LastLogin = DateTime.Today;
+
+                await _unitOfWork.CompleteAsync();
+            }
             await _signInManger.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }

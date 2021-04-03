@@ -1,5 +1,6 @@
 ﻿using BookSmart.Data;
 using BookSmart.Interfaces;
+using BookSmart.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +18,10 @@ namespace BookSmart.Extensions
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddTransient<IBookService, BookService>();
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();
+            services.AddScoped<IMemberRepository, MemberRepository> ();
 
             return services;
         }
