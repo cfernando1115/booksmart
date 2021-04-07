@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BookSmart.Models;
+using System.Linq;
 
 namespace BookSmart.Interfaces
 {
@@ -10,5 +11,8 @@ namespace BookSmart.Interfaces
         Task<IEnumerable<Book>> GetBooksWithGenresAsync();
 
         Task<Book> GetBookWithGenreAsync(int? id);
+
+        IQueryable<Book> GetBooks();
+
     }
 }

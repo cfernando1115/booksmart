@@ -2,9 +2,6 @@
 using BookSmart.Models;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookSmart.Data
@@ -22,6 +19,14 @@ namespace BookSmart.Data
         public async Task<Member> GetMemberByUsernameAsync(string username)
         {
             return await ApplicationDbContext.Members.SingleOrDefaultAsync(u => u.UserName == username);
+        }
+
+        public async Task<Member> GetMemberByUsernameWithBooksAsync(string username)
+        {
+            return await ApplicationDbContext.Members
+                .Include(m=>m.Books)
+                .ThenInclude(b=>b.Genre)
+                .SingleOrDefaultAsync(u => u.UserName == username);
         }
     }
 }

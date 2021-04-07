@@ -10,5 +10,7 @@ namespace BookSmart.Interfaces
     public interface IMemberRepository : IRepository<Member>
     {
         Task<Member> GetMemberByUsernameAsync(string username);
+
+        Task<Member> GetMemberByUsernameWithBooksAsync(string username);
     }
 }

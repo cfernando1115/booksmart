@@ -8,7 +8,7 @@ namespace BookSmart.Data
     {
         private readonly ApplicationDbContext _context;
 
-        public IBookRepository Books { get; private set; }
+        //public IBookRepository Books { get; private set; }
 
         public IBookService BookService { get; private set; }
 
@@ -18,10 +18,9 @@ namespace BookSmart.Data
 
         public IMemberRepository Members { get; private set; }
 
-        public UnitOfWork(ApplicationDbContext context, IBookRepository bookRepository, IBookService bookService, IGenreRepository genreRepository, IMembershipTypeRepository membershiptypeRepository, IMemberRepository memberRepository)
+        public UnitOfWork(ApplicationDbContext context, IBookService bookService, IGenreRepository genreRepository, IMembershipTypeRepository membershiptypeRepository, IMemberRepository memberRepository)
         {
             _context = context;
-            Books = bookRepository;
             BookService = bookService;
             Genres = genreRepository;
             MembershipTypes = membershiptypeRepository;

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
+using System.Collections.Generic;
 
 namespace BookSmart.Models
 {
@@ -28,5 +29,10 @@ namespace BookSmart.Models
         [Required]
         [DisplayName("Genre")]
         public int GenreId { get; set; }
+
+        //[ForeignKey("MemberId")]
+        public ICollection<Member> Members { get; set; }
+
+        //public List<int> MemberId { get; set; }
     }
 }

@@ -4,9 +4,12 @@
 {
     <form method="post" id="logoutForm" asp-action="Logout" asp-controller="Account">
         <ul class="nav navbar-nav">
-            <li class="text-white nav-link">Hello, @User.Identity.Name</li>
+            <li class="text-white nav-link mr-2">Hello, @User.Identity.Name</li>
             <li class="nav-link">
-                <a class="text-white" id="booksLink" asp-controller="Book" asp-action="Index">Books</a>
+                <a class="text-white mr-2" id="booksLink" asp-controller="Book" asp-action="Index">Books</a>
+            </li>
+            <li class="nav-link">
+                <a class="text-white" id="bookBag" asp-controller="Member" asp-action="Bag">Your Bag</a>
             </li>
             <li class="ml-2"><button class="btn btn-success" type="submit">Log Out</button></li>
         </ul>

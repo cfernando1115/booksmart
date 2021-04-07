@@ -21,6 +21,7 @@ namespace BookSmart
                 {
                     SeedData.InitializeMembershipTypes(services);
                     SeedData.InitializeGenres(services);
+                    SeedData.InitializeBooks(services);
                 }
                 catch (Exception ex)
                 {

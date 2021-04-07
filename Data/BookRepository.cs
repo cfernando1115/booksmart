@@ -4,7 +4,7 @@ using BookSmart.Models;
 using BookSmart.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-
+using System.Linq;
 
 namespace BookSmart.Data
 {
@@ -21,12 +21,21 @@ namespace BookSmart.Data
 
         public async Task<IEnumerable<Book>> GetBooksWithGenresAsync() 
         {
-            return await ApplicationDbContext.Books.Include(b => b.Genre).ToListAsync();
+            return await ApplicationDbContext.Books
+                .Include(b => b.Genre)
+                .ToListAsync();
         }
 
         public async Task<Book> GetBookWithGenreAsync(int? id)
         {
-            return await ApplicationDbContext.Books.Include(b => b.Genre).FirstOrDefaultAsync(b => b.Id == id);
+            return await ApplicationDbContext.Books
+                .Include(b => b.Genre)
+                .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        public IQueryable<Book> GetBooks()
+        {
+            return ApplicationDbContext.Books.AsQueryable();
         }
     }
 }

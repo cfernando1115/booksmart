@@ -36,6 +36,10 @@ namespace BookSmart.Data
                 .WithOne(u => u.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
+
+            builder.Entity<Book>()
+                .HasMany(b => b.Members)
+                .WithMany(m => m.Books);
         }
     }
 }

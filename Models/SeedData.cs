@@ -111,5 +111,103 @@ namespace BookSmart.Models
             );
             context.SaveChanges();
         }
+
+        public static void InitializeBooks(IServiceProvider serviceProvider)
+        {
+            using var context = new ApplicationDbContext(
+                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
+            if (context.Books.Any())
+            {
+                return;
+            }
+
+            context.Books.AddRange(
+                new Book
+                {
+                    Name = "Book1",
+                    Author = "Author1",
+                    Price = 10.99f,
+                    GenreId = 1
+                },
+                new Book
+                {
+                    Name = "Book2",
+                    Author = "Author2",
+                    Price = 10.99f,
+                    GenreId = 2
+                },
+                new Book
+                {
+                    Name = "Book3",
+                    Author = "Author3",
+                    Price = 8.99f,
+                    GenreId = 3
+                },
+                new Book
+                {
+                    Name = "Book4",
+                    Author = "Author4",
+                    Price = 8.99f,
+                    GenreId = 2
+                },
+                new Book
+                {
+                    Name = "Book5",
+                    Author = "Author5",
+                    Price = 12.99f,
+                    GenreId = 6
+                },
+                new Book
+                {
+                    Name = "Book6",
+                    Author = "Author6",
+                    Price = 11.99f,
+                    GenreId = 3
+                },
+                new Book
+                {
+                    Name = "Book7",
+                    Author = "Author7",
+                    Price = 14.99f,
+                    GenreId = 5
+                },
+                new Book
+                {
+                    Name = "Book8",
+                    Author = "Author8",
+                    Price = 10.99f,
+                    GenreId = 9
+                },
+                new Book
+                {
+                    Name = "Book9",
+                    Author = "Author9",
+                    Price = 9.99f,
+                    GenreId = 11
+                },
+                new Book
+                {
+                    Name = "Book10",
+                    Author = "Author10",
+                    Price = 8.99f,
+                    GenreId = 4
+                },
+                new Book
+                {
+                    Name = "Book11",
+                    Author = "Author11",
+                    Price = 15.99f,
+                    GenreId = 12
+                },
+                new Book
+                {
+                    Name = "Book12",
+                    Author = "Author12",
+                    Price = 14.99f,
+                    GenreId = 13
+                }
+            );
+            context.SaveChanges();
+        }
     }
 }

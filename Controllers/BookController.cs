@@ -22,18 +22,28 @@ namespace BookSmart.Controllers
 
         public async Task<ActionResult<IEnumerable<Book>>> Index()
         {
-            var books = await _unitOfWork.Books.GetBooksWithGenresAsync();
+            var books = await _unitOfWork.BookService.GetBooksWithGenresAsync();
             return View(books);
         }
 
         [HttpGet("Featured")]
         public async Task<ActionResult<IEnumerable<Book>>> Featured()
         {
-            var user = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
+            var member = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
 
-            var newBooks = await _unitOfWork.BookService.GetBooksAfterDate(user.LastLogin ?? DateTime.Today);
+            var lastLogin = member.LastLogin ?? DateTime.Today;
 
-            return View(newBooks);
+            var numBooks = Utility.FeatureHelper.NumBooks;
+
+            var newBooks = await _unitOfWork.BookService.GetBooksAfterDate(lastLogin, numBooks) ?? await _unitOfWork.BookService.GetBooksBeforeDate(lastLogin, numBooks);
+
+            var memberBooksModel = new MemberBooksViewModel
+            {
+                Member = member,
+                Books = newBooks?.ToList()
+            };
+
+            return View(memberBooksModel);
         }
 
         [HttpGet("Create")]
@@ -62,7 +72,7 @@ namespace BookSmart.Controllers
                     GenreId = model.Book.GenreId
                 };
 
-                _unitOfWork.Books.Add(book);
+                _unitOfWork.BookService.Add(book);
 
                 await _unitOfWork.CompleteAsync();
             }
@@ -78,7 +88,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
+            var book = await _unitOfWork.BookService.GetBookWithGenreAsync(id);
 
             if (book == null)
             {
@@ -92,14 +102,14 @@ namespace BookSmart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteBook(int? id)
         {
-            var book = _unitOfWork.Books.Get(id);
+            var book = _unitOfWork.BookService.Get(id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Books.Remove(book);
+            _unitOfWork.BookService.Remove(book);
 
             await _unitOfWork.CompleteAsync();
 
@@ -114,7 +124,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
+            var book = await _unitOfWork.BookService.GetBookWithGenreAsync(id);
 
             if (book == null)
             {
@@ -140,7 +150,7 @@ namespace BookSmart.Controllers
             {
                 Book updatedBook = viewModel.Book;
 
-                var book = _unitOfWork.Books.Get(updatedBook.Id);
+                var book = _unitOfWork.BookService.Get(updatedBook.Id);
 
                 book.Name = updatedBook.Name;
                 book.Author = updatedBook.Author;

@@ -6,8 +6,6 @@ namespace BookSmart.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBookRepository Books { get; }
-
         IBookService BookService { get; }
 
         IGenreRepository Genres { get; }
