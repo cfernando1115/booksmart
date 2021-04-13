@@ -12,11 +12,14 @@ namespace BookSmart.Utility
         public static string BookDeleted = "Book deleted successfully.";
         public static string BookAddedToBag = "Book added to bag.";
         public static string BookAlreadyInBag = "Book has already been added to your bag.";
+        public static string BookRemovedFromBag = "Book removed from bag.";
+        public static string BookIsNotInBag = "Book is not in bag.";
 
         public static string BookAddError = "Failed to add book, Please try again.";
         public static string BookUpdateError = "Failed to update book, Please try again.";
         public static string BookDeleteError = "Failed to delete book, Please try again.";
-        public static string BookAddToBagError = "Faile to add book to bag, Please try again.";
+        public static string BookAddToBagError = "Failed to add book to bag, Please try again.";
+        public static string BookRemovedFromBagError = "Failed to remove book from bag, Please try again.";
         public static string SomethingWentWrong = "Something went wrong, Please try again.";
 
         public static int SuccessCode = 1;

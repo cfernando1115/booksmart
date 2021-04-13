@@ -69,7 +69,8 @@ namespace BookSmart.Controllers
                     Name = model.Book.Name,
                     Author = model.Book.Author,
                     Price = model.Book.Price,
-                    GenreId = model.Book.GenreId
+                    GenreId = model.Book.GenreId,
+                    Description = model.Book.Description
                 };
 
                 _unitOfWork.BookService.Add(book);
@@ -156,6 +157,7 @@ namespace BookSmart.Controllers
                 book.Author = updatedBook.Author;
                 book.Price = updatedBook.Price;
                 book.GenreId = updatedBook.GenreId;
+                book.Description = updatedBook.Description;
 
                 await _unitOfWork.CompleteAsync();
 
@@ -163,6 +165,24 @@ namespace BookSmart.Controllers
             }
 
             return View(viewModel);
+        }
+
+        [HttpGet("Detail/{id?}")]
+        public async Task<ActionResult<Book>> Detail(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var book = await _unitOfWork.BookService.GetBookWithGenreAsync(id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            return View(book);
         }
     }
 }

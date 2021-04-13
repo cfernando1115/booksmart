@@ -50,5 +50,37 @@ namespace BookSmart.Controllers.Api
                 return Ok(response);
             }
         }
+
+        [Route("RemoveFromBag")]
+        [Authorize]
+        public async Task<ActionResult> RemoveFromBag(int bookId)
+        {
+            RequestResponse<int> response = new RequestResponse<int>();
+            try
+            {
+                var member = await _unitOfWork.Members.GetMemberByUsernameWithBooksAsync(User.GetUsername());
+                var bookToRemove = _unitOfWork.BookService.Get(bookId);
+                if (member.Books.Contains(bookToRemove))
+                {
+                    member.Books.Remove(bookToRemove);
+                    response.Message = Utility.ResponseHelper.BookRemovedFromBag;
+                    response.Status = Utility.ResponseHelper.SuccessCode;
+
+                    await _unitOfWork.CompleteAsync();
+
+                    return Ok(response);
+                }
+                response.Message = Utility.ResponseHelper.BookIsNotInBag;
+                response.Status = Utility.ResponseHelper.FailureCode;
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Message = ex.Message;
+                response.Status = Utility.ResponseHelper.FailureCode;
+                return Ok(response);
+            }
+        }
     }
 }

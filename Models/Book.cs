@@ -23,6 +23,8 @@ namespace BookSmart.Models
         [Required]
         public DateTime DateAdded { get; set; } = DateTime.Today;
 
+        public string Description { get; set; }
+
         [ForeignKey("GenreId")]
         public Genre Genre { get; set; }
 
@@ -30,9 +32,7 @@ namespace BookSmart.Models
         [DisplayName("Genre")]
         public int GenreId { get; set; }
 
-        //[ForeignKey("MemberId")]
         public ICollection<Member> Members { get; set; }
 
-        //public List<int> MemberId { get; set; }
     }
 }

@@ -8,9 +8,12 @@
             <li class="nav-link">
                 <a class="text-white mr-2" id="booksLink" asp-controller="Book" asp-action="Index">Books</a>
             </li>
-            <li class="nav-link">
-                <a class="text-white" id="bookBag" asp-controller="Member" asp-action="Bag">Your Bag</a>
-            </li>
+            @if (User.IsInRole(BookSmart.Utility.RoleHelper.Member))
+            {
+                <li class="nav-link">
+                    <a class="text-white" id="bookBag" asp-controller="Member" asp-action="Bag">Your Bag</a>
+                </li>
+            }
             <li class="ml-2"><button class="btn btn-success" type="submit">Log Out</button></li>
         </ul>
     </form>     

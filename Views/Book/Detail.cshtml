@@ -1,0 +1,13 @@
+﻿@model BookSmart.Models.Book
+
+<div class="container p-3 text-center">
+    <img src="~/img/logo-med.svg" alt="@Model.Name" />
+    <h2>@Model.Name</h2>
+    <h3>@Model.Author</h3>
+    <p>@Model.Genre.Name</p>
+    <p class="mb-0">@Model.Price</p>
+    <p><small><i> before membership discount</i></small></p>
+    <br />
+    <p>@Model.Description</p>
+</div>
+
