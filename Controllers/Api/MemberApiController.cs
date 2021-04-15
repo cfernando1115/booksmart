@@ -51,6 +51,7 @@ namespace BookSmart.Controllers.Api
             }
         }
 
+        [HttpPost]
         [Route("RemoveFromBag")]
         [Authorize]
         public async Task<ActionResult> RemoveFromBag(int bookId)

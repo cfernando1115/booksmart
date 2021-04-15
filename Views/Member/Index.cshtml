@@ -1,10 +1,52 @@
 ﻿@model IEnumerable<BookSmart.Models.Member>
 
-<div class="container">
-    @foreach (var member in Model)
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Members</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Add Member</a>
+        </div>
+    </div>
+    @if (Model.Count() > 0)
     {
-        <div>@member.Name</div>
-        <div>@member.BooksRemaining</div>
+        <table class="table table-bordered table-striped" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Membership Type</th>
+                    <th>Books Remaining</th>
+                    <th>Last Login</th>
+                    <th>Update/Delete</th>
+                    <th>Shipments</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td width="20%">@member.Name</td>
+                        <td width="20%">@member.MembershipType.Name</td>
+                        <td width="10%">@member.BooksRemaining</td>
+                        <td width="20%">@member.LastLogin</td>
+                        <td width="20%">
+                            <div class="w-100 btn-group" role="group">
+                                <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Update">Update</a>
+                                <a class="btn btn-danger mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Delete">Delete</a>
+                            </div>
+                        </td>
+                        <td width="10%">
+                            <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Shipment" asp-action="Calendar">Shipments</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No members in the database</p>
     }
 </div>
 

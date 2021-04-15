@@ -1,0 +1,30 @@
+﻿@model IEnumerable<BookSmart.Models.Book>
+
+<div class="modal fade" role="dialog" id="shippingInput" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="shipmentForm" autocomplete="off" novalidate="novalidate">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add/Edit Shipment</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="bookId">Select Book</label>
+                        <select id="bookId" class="form-control"
+                                asp-items="@(new SelectList(Model, "Id", "Name"))">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="shipDate">Ship Date</label>
+                        <input type="text" maxlength="100" class="form-control" id="shipDate" />
+                    </div>
+                    <input type="hidden" id="id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal();">Close</button>
+                    <button type="button" class="btn btn-success" onclick="submitForm();">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

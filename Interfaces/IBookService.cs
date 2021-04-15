@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BookSmart.Services
+namespace BookSmart.Interfaces
 {
     public interface IBookService : IBookRepository
     {

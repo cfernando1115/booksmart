@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace BookSmart.ViewModels
 {
-    public class MemberBooksViewModel
+    public class ShipmentViewModel
     {
         public Member Member { get; set; }
 
-        public List<Book> Books { get; set; }
+        public IEnumerable<Book> Books { get; set; }
+
     }
 }

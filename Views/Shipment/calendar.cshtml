@@ -1,0 +1,22 @@
+﻿@model BookSmart.ViewModels.ShipmentViewModel
+
+<div class="container p-3">
+    <h2>Manage Shipping</h2>
+    <p>Select a date to schedule shipping!</p>
+    <input hidden id="memberId" disabled value="@Model.Member.Id" />
+
+    <div class="row mb-3">
+        <div class="col-3">
+            <label for="memberName">Member</label>
+            <input id="memberName" disabled value="@Model.Member.Name" />
+        </div>
+    </div>
+    <div id="calendar"></div>
+</div>
+
+<partial name="_AddEditShipment" , model="Model.Books" />
+
+@section Scripts{
+    <script src="~/js/shippingCalendar.js"></script>
+}
+

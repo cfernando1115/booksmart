@@ -1,4 +1,5 @@
 ﻿using BookSmart.Data;
+using BookSmart.Interfaces;
 using BookSmart.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,9 +16,9 @@ namespace BookSmart.Services
 
         public async Task<IEnumerable<Book>> GetBooksAfterDate(DateTime date, int maxNumberOfBooks)
         {
-            var numberOfBooks = ApplicationDbContext.Books
+            var numberOfBooks = await ApplicationDbContext.Books
                 .Where(b => b.DateAdded >= date)
-                .Count();
+                .CountAsync();
 
             if(numberOfBooks != 0)
             {
@@ -35,9 +36,9 @@ namespace BookSmart.Services
 
         public async Task<IEnumerable<Book>> GetBooksBeforeDate(DateTime date, int maxNumberOfBooks)
         {
-            var numberOfBooks = ApplicationDbContext.Books
+            var numberOfBooks = await ApplicationDbContext.Books
                 .Where(b => b.DateAdded < date)
-                .Count();
+                .CountAsync();
 
             var booksToTake = DetermineBooksToTake(numberOfBooks, maxNumberOfBooks);
 

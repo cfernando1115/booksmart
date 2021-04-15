@@ -1,4 +1,4 @@
-﻿const routeURL = location.protocol + '//' + location.host;
+﻿let routeURL = location.protocol + '//' + location.host;
 
 function addBookToBag(bookId) {
     try {

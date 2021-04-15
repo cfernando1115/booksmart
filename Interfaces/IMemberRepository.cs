@@ -1,8 +1,6 @@
 ﻿using BookSmart.Models;
 using Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookSmart.Interfaces
@@ -12,5 +10,11 @@ namespace BookSmart.Interfaces
         Task<Member> GetMemberByUsernameAsync(string username);
 
         Task<Member> GetMemberByUsernameWithBooksAsync(string username);
+
+        Task<Member> GetMemberByIdWithBooksAsync(int id);
+
+        Task<IEnumerable<Member>> GetMembersWithMembershipTypeAsync();
+
+        Task<Member> GetMemberWithMembershipTypeAsync(int id);
     }
 }

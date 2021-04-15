@@ -8,6 +8,8 @@ namespace BookSmart.Interfaces
     {
         IBookService BookService { get; }
 
+        IShipmentService ShipmentService { get; }
+
         IGenreRepository Genres { get; }
 
         IMembershipTypeRepository MembershipTypes { get; }

@@ -1,4 +1,5 @@
 ﻿@inject Microsoft.AspNetCore.Identity.SignInManager<BookSmart.Models.ApplicationUser> signInManager
+@inject Microsoft.AspNetCore.Identity.UserManager<BookSmart.Models.ApplicationUser> userManager
 
 @if (signInManager.IsSignedIn(User))
 {
@@ -11,7 +12,16 @@
             @if (User.IsInRole(BookSmart.Utility.RoleHelper.Member))
             {
                 <li class="nav-link">
-                    <a class="text-white" id="bookBag" asp-controller="Member" asp-action="Bag">Your Bag</a>
+                    <a class="text-white" id="calendarLink" asp-route-id="@userManager.GetUserId(User)" asp-controller="Shipment" asp-action="Calendar">Manage shipping</a>
+                </li>
+                <li class="nav-link">
+                    <a class="text-white" id="bookBagLink" asp-controller="Member" asp-action="Bag">Your Bag</a>
+                </li>
+            }
+            @if (User.IsInRole(BookSmart.Utility.RoleHelper.Admin))
+            {
+                <li class="nav-link">
+                    <a class="text-white" id="membersLink" asp-controller="Member" asp-action="Index">Members</a>
                 </li>
             }
             <li class="ml-2"><button class="btn btn-success" type="submit">Log Out</button></li>

@@ -21,6 +21,8 @@ namespace BookSmart.Data
 
         public DbSet<Member> Members { get; set; }
 
+        public DbSet<Shipment> Shipments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

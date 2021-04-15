@@ -1,5 +1,4 @@
-﻿using BookSmart.Data;
-using BookSmart.Interfaces;
+﻿using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
 using BookSmart.Extensions;
@@ -8,9 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace BookSmart.Controllers
 {

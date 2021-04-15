@@ -22,6 +22,8 @@ namespace BookSmart.Extensions
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();
             services.AddScoped<IMemberRepository, MemberRepository> ();
+            services.AddScoped<IShipmentRepository, ShipmentRepository>();
+            services.AddTransient<IShipmentService, ShipmentService>();
 
             return services;
         }
