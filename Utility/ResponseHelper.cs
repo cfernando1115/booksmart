@@ -16,6 +16,8 @@ namespace BookSmart.Utility
         public static string BookIsNotInBag = "Book is not in bag.";
         public static string ShipmentUpdated = "Shipment updated successfully.";
         public static string ShipmentAdded = "Shipment added successfully.";
+        public static string ShipmentDeleted = "Shipment deleted successfully.";
+        public static string ShipmentConfirmed = "Shipment confirmed.";
 
         public static string BookAddError = "Failed to add book, Please try again.";
         public static string BookUpdateError = "Failed to update book, Please try again.";
@@ -24,6 +26,8 @@ namespace BookSmart.Utility
         public static string BookRemovedFromBagError = "Failed to remove book from bag, Please try again.";
         public static string ShipmentUpdateError = "Failed to update shipment, Please try again.";
         public static string ShipmentAddError = "Failed to add shipment, Please try again.";
+        public static string ShipmentDeleteError = "Failed to delete shipment, Please try again.";
+        public static string ShipmentConfirmError = "Failed to update shipment, Please try again.";
         public static string SomethingWentWrong = "Something went wrong, Please try again.";
 
         public static int SuccessCode = 1;

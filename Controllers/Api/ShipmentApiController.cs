@@ -15,15 +15,13 @@ namespace BookSmart.Controllers.Api
     public class ShipmentApiController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IShipmentService _shipmentService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _loginUserId;
         private readonly string _role;
 
-        public ShipmentApiController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IShipmentService shipmentService)
+        public ShipmentApiController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
-            _shipmentService = shipmentService;
             _httpContextAccessor = httpContextAccessor;
 
             _loginUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -39,7 +37,7 @@ namespace BookSmart.Controllers.Api
 
             try
             {
-                requestResponse.Status = await _shipmentService.AddUpdateAsync(shipmentModel);
+                requestResponse.Status = await _unitOfWork.ShipmentService.AddUpdateAsync(shipmentModel);
 
                 if(requestResponse.Status == 1)
                 {
@@ -66,7 +64,7 @@ namespace BookSmart.Controllers.Api
 
             try
             {
-                requestResponse.Data = _shipmentService.ShipmentsByMemberId(memberId);
+                requestResponse.Data = _unitOfWork.ShipmentService.ShipmentsByMemberId(memberId);
                 requestResponse.Status = Utility.ResponseHelper.SuccessCode;
             }
             catch(Exception ex)
@@ -85,13 +83,60 @@ namespace BookSmart.Controllers.Api
 
             try
             {
-                requestResponse.Data = _shipmentService.ShipmentById(id);
+                requestResponse.Data = _unitOfWork.ShipmentService.ShipmentById(id);
                 requestResponse.Status = Utility.ResponseHelper.SuccessCode;
             }
             catch(Exception ex)
             {
                 requestResponse.Message = ex.Message;
                 requestResponse.Status = Utility.ResponseHelper.FailureCode;
+            }
+            return Ok(requestResponse);
+        }
+
+        [HttpGet]
+        [Route("DeleteShipment/{id}")]
+        public async Task<ActionResult> DeleteShipment(int id)
+        {
+            RequestResponse<int> requestResponse = new RequestResponse<int>();
+            try
+            {
+                requestResponse.Status = await _unitOfWork.ShipmentService.DeleteShipment(id);
+                requestResponse.Message = requestResponse.Status == 1
+                    ? Utility.ResponseHelper.ShipmentDeleted
+                    : Utility.ResponseHelper.ShipmentDeleteError;
+            }
+            catch(Exception ex)
+            {
+                requestResponse.Status = Utility.ResponseHelper.FailureCode;
+                requestResponse.Message = ex.Message;
+            }
+            return Ok(requestResponse);
+        }
+
+        [HttpGet]
+        [Route("ConfirmShipment/{id}")]
+        public async Task<ActionResult> ConfirmShipment(int id)
+        {
+            RequestResponse<int> requestResponse = new RequestResponse<int>();
+            try
+            {
+                var result = await _unitOfWork.ShipmentService.ConfirmShipment(id);
+                if(result > 0)
+                {
+                    requestResponse.Status = result;
+                    requestResponse.Message = Utility.ResponseHelper.ShipmentConfirmed;
+                }
+                else
+                {
+                    requestResponse.Status = Utility.ResponseHelper.FailureCode;
+                    requestResponse.Message = Utility.ResponseHelper.ShipmentConfirmError;
+                }
+            }
+            catch(Exception ex)
+            {
+                requestResponse.Status = Utility.ResponseHelper.FailureCode;
+                requestResponse.Message = ex.Message;
             }
             return Ok(requestResponse);
         }

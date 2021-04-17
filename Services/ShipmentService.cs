@@ -21,7 +21,15 @@ namespace BookSmart.Services
 
             if (shipmentFormViewModel != null && shipmentFormViewModel.Id > 0)
             {
+                var shipment = ApplicationDbContext.Shipments.FirstOrDefault(s => s.Id == shipmentFormViewModel.Id);
 
+                if(shipment != null)
+                {
+                    shipment.ShipDate = shipDate;
+                    shipment.IsConfirmed = shipmentFormViewModel.IsConfirmed;
+                    await ApplicationDbContext.SaveChangesAsync();
+                    return 1;
+                }
             }
             else
             {
@@ -66,6 +74,28 @@ namespace BookSmart.Services
                     IsConfirmed = s.IsConfirmed,
                     BookName = ApplicationDbContext.Books.Where(b => b.Id == s.BookId).Select(b => b.Name).FirstOrDefault()
                 }).SingleOrDefault();
+        }
+
+        public async Task<int> DeleteShipment(int id)
+        {
+            var shipment = ApplicationDbContext.Shipments.FirstOrDefault(s => s.Id == id);
+            if(shipment != null)
+            {
+                ApplicationDbContext.Shipments.Remove(shipment);
+                return await ApplicationDbContext.SaveChangesAsync();
+            }
+            return 0;
+        }
+
+        public async Task<int> ConfirmShipment(int id)
+        {
+            var shipment = ApplicationDbContext.Shipments.FirstOrDefault(s => s.Id == id);
+            if(shipment != null)
+            {
+                shipment.IsConfirmed = true;
+                return await ApplicationDbContext.SaveChangesAsync();
+            }
+            return 0;
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿let routeURL = location.protocol + '//' + location.host;
+﻿
+
+let routeURL = location.protocol + '//' + location.host;
 
 $(document).ready(function () {
     initializeCalendar();
@@ -10,7 +12,7 @@ $(document).ready(function () {
 
 });
 
-let events = []
+let events = [];
 
 let calendar;
 
@@ -65,6 +67,7 @@ function initializeCalendar() {
                 },
                 eventClick: function (info) {
                     getShipmentDetailsByEventId(info.event);
+                    isEdit = true;
                 }
             });
             calendar.render();
@@ -76,8 +79,9 @@ function initializeCalendar() {
 }
 
 function submitForm() {
+let requestData;
     if (checkValidation()) {
-        const requestData = {
+        requestData = {
             Id: parseInt($('#id').val()),
             BookId: $('#bookId').val(),
             ShipDate: $('#shipDate').val(),
@@ -103,7 +107,7 @@ function submitForm() {
                 $.notify('Error', 'error');
             }
         });
-    }
+    }   
 }
 
 function getShipmentDetailsByEventId(info) {
@@ -122,20 +126,71 @@ function getShipmentDetailsByEventId(info) {
     });
 }
 
+function deleteShipment() {
+    const id = +($('#id').val());
+    $.ajax({
+        url: `${routeURL}/api/Shipment/DeleteShipment/${id}`,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (response) {
+            if (response.status === 1) {
+                $.notify(response.message, 'success');
+                calendar.refetchEvents();
+                closeModal();
+            }
+            else {
+                $.notify(response.message, 'error');
+            }
+        },
+        error: function (xhr) {
+            $.notify('Error', 'error');
+        }
+    })
+}
+
+function confirmShipment() {
+    const id = +($('#id').val());
+    $.ajax({
+        url: `${routeURL}/api/Shipment/ConfirmShipment/${id}`,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (response) {
+            if (response.status === 1) {
+                $.notify(response.message, 'success');
+                calendar.refetchEvents();
+                closeModal();
+            }
+            else {
+                $.notify(response.message, 'error');
+            }
+        },
+        error: function (xhr) {
+            $.notify('Error', 'error');
+        }
+    })
+}
+
 function checkValidation() {
     let isValid = true;
     if ($('#shipDate').val() === undefined || $('#shipDate').val() === '') {
         isValid = false;
         $('#shipDate').addClass('error');
-    }
-    if (events.some((e) => e.bookId === $('#bookId').val())) {
-        isValid = false;
-        $('#bookId').addClass('error');
-        $.notify('Shipment has already been scheduled for that book', 'error');
+        $('#date-error').text('Please select a valid ship date.');
+        $('#date-error').removeClass('d-none');
     }
     else {
-        $('#shipDate').removeClass('error');
-        $('#bookId').removeClass('error');
+        if (events.some((e) => e.bookId === $('#bookId').val()) && +$('#id').val() === 0) {
+            isValid = false;
+            $('#bookId').addClass('error');
+            $('#book-error').text('Shipment already scheduled. To update, please edit existing shipment');
+            $('#book-error').removeClass('d-none');
+        }
+        else {
+            $('#shipDate').removeClass('error');
+            $('#bookId').removeClass('error');
+            $('#date-error').addClass('d-none');
+            $('#book-error').addClass('d-none');
+        }
     }
     return isValid;
 }
@@ -144,10 +199,41 @@ function openModal(data, isDetail = false) {
     if (isDetail) {
         $('#shipDate').val(data.shipDate);
         $('#bookId').val(data.bookId);
+        $('#id').val(data.id);
+        $('#bookId').addClass('d-none');
+        $('#bookLabel').removeClass('d-none');
+        $('#bookLabel').val(data.bookName);
+        if (data.isConfirmed) {
+            $('#btnConfirm').addClass('d-none');
+            $('#btnDelete').addClass('d-none');
+            $('#btnSubmit').addClass('d-none');
+            $('#shipDate').addClass('d-none');
+            $('.k-datepicker').addClass('d-none');
+            $('#shipDateLabel').removeClass('d-none');
+            $('#shipDateLabel').val(data.shipDate);
+        }
+        else {
+            $('#btnConfirm').removeClass('d-none');
+            $('#btnDelete').removeClass('d-none');
+            $('#btnSubmit').removeClass('d-none');
+            $('#shipDate').removeClass('d-none');
+            $('.k-datepicker').removeClass('d-none');
+            $('#shipDateLabel').addClass('d-none');
+            $('#shipDateLabel').val(data.shipDate);
+        }
     }
     else {
         $('#shipDate').val(data.startStr);
         $('#id').val(0);
+        $('#bookId').removeClass('d-none');
+        $('#bookLabel').addClass('d-none');
+        $('#btnConfirm').addClass('d-none');
+        $('#btnDelete').addClass('d-none');
+        $('#btnSubmit').removeClass('d-none');
+        $('#shipDate').removeClass('d-none');
+        $('.k-datepicker').removeClass('d-none');
+        $('#shipDateLabel').addClass('d-none');
+        $('#shipDateLabel').val(data.shipDate);
     }
     $('#shippingInput').modal('show');
 }
@@ -156,5 +242,7 @@ function closeModal() {
     $('#shipmentForm')[0].reset();
     $('#shipDate').removeClass('error');
     $('#bookId').removeClass('error');
+    $('#date-error').addClass('d-none');
+    $('#book-error').addClass('d-none');
     $('#shippingInput').modal('hide');
 }

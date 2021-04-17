@@ -11,5 +11,9 @@ namespace BookSmart.Interfaces
         List<ShipmentFormViewModel> ShipmentsByMemberId(int id);
 
         ShipmentFormViewModel ShipmentById(int id);
+
+        public Task<int> DeleteShipment(int id);
+
+        public Task<int> ConfirmShipment(int id);
     }
 }

@@ -9,20 +9,28 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="bookId">Select Book</label>
+                        <label for="bookId">Book</label>
+                        <input class="d-none form-control" id="bookLabel" disabled />
                         <select id="bookId" class="form-control"
                                 asp-items="@(new SelectList(Model, "Id", "Name"))">
                         </select>
                     </div>
+                    <div id="book-error" class="d-none text-danger small">
+                    </div>
                     <div class="form-group">
                         <label for="shipDate">Ship Date</label>
+                        <input class="d-none form-control" id="shipDateLabel" disabled />
                         <input type="text" maxlength="100" class="form-control" id="shipDate" />
+                    </div>
+                    <div id="date-error" class="d-none text-danger small">
                     </div>
                     <input type="hidden" id="id" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal();">Close</button>
-                    <button type="button" class="btn btn-success" onclick="submitForm();">Submit</button>
+                    <button id="btnConfirm" type="button" class="btn btn-primary" onclick="confirmShipment();">Confirm</button>
+                    <button id="btnDelete" type="button" class="btn btn-danger" onclick="deleteShipment();">Delete</button>
+                    <button id="btnSubmit" type="button" class="btn btn-success" onclick="submitForm();">Submit</button>
+                    <button id="btnClose" type="button" class="btn btn-secondary" onclick="closeModal();">Close</button>
                 </div>
             </form>
         </div>
