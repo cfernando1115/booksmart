@@ -20,17 +20,35 @@ namespace BookSmart.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var members = await _unitOfWork.Members.GetMembersWithMembershipTypeAsync();
+            var members = await _unitOfWork.MemberService.GetMembersWithMembershipTypeAsync();
             return View(members);
         }
 
         [HttpGet("Bag")]
-        public async Task<ActionResult> Bag()
+        public async Task<ActionResult<MemberBagViewModel>> Bag()
         {
-            var member = await _unitOfWork.Members.GetMemberByUsernameWithBooksAsync(User.GetUsername());
+            var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
             if(member != null)
             {
-                return View(member);
+                var confirmedShipments = member.Shipments?.Where(s => s.IsConfirmed == true)
+                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd") })
+                    .ToList();
+
+                var unconfirmedShipments = member.Shipments?.Where(s => s.IsConfirmed == false && s.ShipDate != null)
+                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd") })
+                    .ToList();
+
+                var unscheduledBooks = member.Books?.Where(b => member.Shipments.SingleOrDefault(s => s.BookId == b.Id) == null).ToList();
+
+                var memberBagModel = new MemberBagViewModel
+                {
+                    Member = member,
+                    ConfirmedShipments = confirmedShipments,
+                    UnconfirmedShipments = unconfirmedShipments,
+                    UnscheduledBooks = unscheduledBooks
+                };
+
+                return View(memberBagModel);
             }
             return RedirectToAction("Login", "Account");
         }
@@ -43,7 +61,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync((int)id);
+            var member = await _unitOfWork.MemberService.GetMemberWithMembershipTypeAsync((int)id);
 
             if (member == null)
             {
@@ -69,7 +87,7 @@ namespace BookSmart.Controllers
             {
                 Member updatedMember = viewModel.Member;
 
-                var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync(updatedMember.Id);
+                var member = await _unitOfWork.MemberService.GetMemberWithMembershipTypeAsync(updatedMember.Id);
 
                 member.Name = updatedMember.Name;
                 member.MembershipTypeId = updatedMember.MembershipTypeId;
@@ -91,7 +109,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync((int)id);
+            var member = await _unitOfWork.MemberService.GetMemberWithMembershipTypeAsync((int)id);
 
             if (member == null)
             {
@@ -105,14 +123,14 @@ namespace BookSmart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMember(int? id)
         {
-            var member = _unitOfWork.Members.Get(id);
+            var member = _unitOfWork.MemberService.Get(id);
 
             if (member == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Members.Remove(member);
+            _unitOfWork.MemberService.Remove(member);
 
             await _unitOfWork.CompleteAsync();
 

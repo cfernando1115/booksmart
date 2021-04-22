@@ -29,7 +29,7 @@ namespace BookSmart.Controllers
         [HttpGet("Featured")]
         public async Task<ActionResult<IEnumerable<Book>>> Featured()
         {
-            var member = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
+            var member = await _unitOfWork.MemberService.GetMemberByUsernameAsync(User.GetUsername());
 
             var lastLogin = member.LastLogin ?? DateTime.Today;
 

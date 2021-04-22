@@ -1,5 +1,4 @@
 ﻿using BookSmart.Interfaces;
-using BookSmart.Services;
 using System.Threading.Tasks;
 
 namespace BookSmart.Data
@@ -8,24 +7,24 @@ namespace BookSmart.Data
     {
         private readonly ApplicationDbContext _context;
 
+        public IMemberService MemberService { get; private set; }
+
         public IBookService BookService { get; private set; }
 
         public IGenreRepository Genres { get; private set; }
 
         public IMembershipTypeRepository MembershipTypes { get; private set; }
 
-        public IMemberRepository Members { get; private set; }
-
         public IShipmentService ShipmentService { get; private set; }
 
-        public UnitOfWork(ApplicationDbContext context, IBookService bookService, IShipmentService shipmentService, IGenreRepository genreRepository, IMembershipTypeRepository membershiptypeRepository, IMemberRepository memberRepository)
+        public UnitOfWork(ApplicationDbContext context, IMemberService memberService, IBookService bookService, IShipmentService shipmentService, IGenreRepository genreRepository, IMembershipTypeRepository membershiptypeRepository)
         {
             _context = context;
+            MemberService = memberService;
             ShipmentService = shipmentService;
             BookService = bookService;
             Genres = genreRepository;
             MembershipTypes = membershiptypeRepository;
-            Members = memberRepository;
         }
 
         public async Task<int> CompleteAsync()

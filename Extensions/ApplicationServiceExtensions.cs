@@ -17,12 +17,10 @@ namespace BookSmart.Extensions
             });      
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IBookRepository, BookRepository>();
             services.AddTransient<IBookService, BookService>();
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IMembershipTypeRepository, MembershipTypeRepository>();
-            services.AddScoped<IMemberRepository, MemberRepository> ();
-            services.AddScoped<IShipmentRepository, ShipmentRepository>();
+            services.AddScoped<IMemberService, MemberService>();
             services.AddTransient<IShipmentService, ShipmentService>();
 
             return services;

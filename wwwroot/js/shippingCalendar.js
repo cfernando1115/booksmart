@@ -155,7 +155,7 @@ function confirmShipment() {
         type: 'GET',
         dataType: 'JSON',
         success: function (response) {
-            if (response.status === 1) {
+            if (response.status > 0) {
                 $.notify(response.message, 'success');
                 calendar.refetchEvents();
                 closeModal();

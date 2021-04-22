@@ -23,7 +23,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var member = await _unitOfWork.Members.GetMemberByIdWithBooksAsync((int)id);
+            var member = await _unitOfWork.MemberService.GetMemberByIdWithBooksAsync((int)id);
 
             ShipmentViewModel viewModel = new ShipmentViewModel
             {

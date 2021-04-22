@@ -30,6 +30,7 @@ namespace BookSmart.Data
                 .SingleOrDefaultAsync(u => u.UserName == username);
         }
 
+
         public async Task<Member> GetMemberByIdWithBooksAsync(int id)
         {
             return await ApplicationDbContext.Members

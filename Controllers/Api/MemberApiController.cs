@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using BookSmart.ViewModels;
 using System;
+using System.Linq;
 
 namespace BookSmart.Controllers.Api
 {
@@ -27,7 +28,7 @@ namespace BookSmart.Controllers.Api
             RequestResponse<int> response = new RequestResponse<int>();
             try
             {
-                var member = await _unitOfWork.Members.GetMemberByUsernameWithBooksAsync(User.GetUsername());
+                var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAsync(User.GetUsername());
                 var bookToAdd = _unitOfWork.BookService.Get(bookId);
                 if (member.Books.Contains(bookToAdd))
                 {
@@ -59,11 +60,19 @@ namespace BookSmart.Controllers.Api
             RequestResponse<int> response = new RequestResponse<int>();
             try
             {
-                var member = await _unitOfWork.Members.GetMemberByUsernameWithBooksAsync(User.GetUsername());
+                var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
                 var bookToRemove = _unitOfWork.BookService.Get(bookId);
                 if (member.Books.Contains(bookToRemove))
                 {
                     member.Books.Remove(bookToRemove);
+
+                    var shipment = member.Shipments.FirstOrDefault(s => s.BookId == bookToRemove.Id);
+                    if(shipment != null)
+                    {
+                        member.Shipments.Remove(shipment);
+                        await _unitOfWork.ShipmentService.DeleteShipment(shipment.Id);
+                    }
+
                     response.Message = Utility.ResponseHelper.BookRemovedFromBag;
                     response.Status = Utility.ResponseHelper.SuccessCode;
 

@@ -1,4 +1,5 @@
-﻿using BookSmart.ViewModels;
+﻿using BookSmart.Models;
+using BookSmart.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace BookSmart.Interfaces
         List<ShipmentFormViewModel> ShipmentsByMemberId(int id);
 
         ShipmentFormViewModel ShipmentById(int id);
+
+        Task<List<Shipment>> ShipmentsWithBooksByMemberId(int id);
 
         public Task<int> DeleteShipment(int id);
 

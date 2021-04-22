@@ -2,6 +2,7 @@
 using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,8 @@ namespace BookSmart.Services
                     MemberId = JsonSerializer.Deserialize<int>(shipmentFormViewModel.MemberId)
                 };
 
+                var member = ApplicationDbContext.Members.FirstOrDefault(m => m.Id == Convert.ToInt32(shipmentFormViewModel.MemberId));
+                member?.Shipments.Add(shipment);
                 ApplicationDbContext.Shipments.Add(shipment);
                 await ApplicationDbContext.SaveChangesAsync();
                 return 2;
@@ -50,7 +53,7 @@ namespace BookSmart.Services
 
         public List<ShipmentFormViewModel> ShipmentsByMemberId(int id)
         {
-            return ApplicationDbContext.Shipments.Where(s => s.MemberId == id)
+            return ApplicationDbContext.Shipments.Include(b => b.Book).Where(s => s.MemberId == id)
                 .ToList()
                 .Select(s => new ShipmentFormViewModel
                 {
@@ -60,6 +63,11 @@ namespace BookSmart.Services
                     IsConfirmed = s.IsConfirmed,
                     BookName = ApplicationDbContext.Books.Where(b => b.Id == s.BookId).Select(b => b.Name).FirstOrDefault()
                 }).ToList();
+        }
+
+        public async Task<List<Shipment>> ShipmentsWithBooksByMemberId(int id)
+        {
+            return await ApplicationDbContext.Shipments.Include(s => s.Book).ThenInclude(b =>b.Genre).Where(s => s.MemberId == id).ToListAsync();
         }
 
         public ShipmentFormViewModel ShipmentById(int id)
@@ -82,6 +90,8 @@ namespace BookSmart.Services
             if(shipment != null)
             {
                 ApplicationDbContext.Shipments.Remove(shipment);
+                var member = ApplicationDbContext.Members.FirstOrDefault(m => m.Id == shipment.MemberId);
+                member?.Shipments.Remove(shipment);
                 return await ApplicationDbContext.SaveChangesAsync();
             }
             return 0;
@@ -93,6 +103,12 @@ namespace BookSmart.Services
             if(shipment != null)
             {
                 shipment.IsConfirmed = true;
+                var member = ApplicationDbContext.Members.Include(m => m.MembershipType)
+                    .FirstOrDefault(m => m.Id == shipment.MemberId);
+                if(member.MembershipType.Id != 1)
+                {
+                    member.BooksRemaining--;
+                }
                 return await ApplicationDbContext.SaveChangesAsync();
             }
             return 0;

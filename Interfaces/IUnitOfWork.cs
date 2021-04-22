@@ -1,5 +1,4 @@
-﻿using BookSmart.Services;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace BookSmart.Interfaces
@@ -10,11 +9,11 @@ namespace BookSmart.Interfaces
 
         IShipmentService ShipmentService { get; }
 
+        IMemberService MemberService { get; }
+
         IGenreRepository Genres { get; }
 
         IMembershipTypeRepository MembershipTypes { get; }
-
-        IMemberRepository Members { get;  }
 
         Task<int> CompleteAsync();
     }

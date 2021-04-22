@@ -13,6 +13,8 @@ namespace BookSmart.Models
 
         public ICollection<Book> Books { get; set; } = new List<Book>();
 
+        public ICollection<Shipment> Shipments { get; set; } = new List<Shipment>();
+
         public DateTime? LastLogin { get; set; }
 
         [ForeignKey("MembershipTypeId")]
