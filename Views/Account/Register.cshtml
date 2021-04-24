@@ -3,7 +3,14 @@
 <div class="container mt-2">
     <h2>Sign up</h2>
     <form method="post" asp-action="Register" asp-controller="Account">
-        <h4>Create a new account</h4>
+        @if (User.IsInRole(BookSmart.Utility.RoleHelper.Admin))
+        {
+            <h4>Register an admin account</h4>
+        }
+        else
+        {
+            <h4>Create a new account</h4>
+        }
         <hr />
         <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group row">
@@ -37,7 +44,7 @@
         <div class="form-group row">
             <label class="col-md-2" asp-for="RoleName"></label>
             <div class="col-md-10">
-                <select asp-for="RoleName" class="form-control role-name" asp-items="@BookSmart.Utility.RoleHelper.GetRolesDropDown()">
+                <select asp-for="RoleName" class="form-control role-name" asp-items="@BookSmart.Utility.RoleHelper.GetRolesDropDown(User.IsInRole(BookSmart.Utility.RoleHelper.Admin))">
                     <option selected>--Select role--</option>
                 </select>
                 <span asp-validation-for="RoleName" class="text-danger"></span>
@@ -60,7 +67,7 @@
             Already have an account?
             <a asp-action="Login"> Log in</a>
         </p>
-</form>
+    </form>
 </div>
 
 @section Scripts{ 

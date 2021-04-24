@@ -8,7 +8,17 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-
+    <div class="row">
+        @if (TempData.ContainsKey("newAdminSignUp"))
+        {
+            <div class="container">
+                <div class="alert alert-success alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+                    <strong>Account created for @TempData["newAdminSignUp"].ToString()</strong>
+                </div>
+            </div>
+        }
+    </div>
     <div class="text-center home-banner">
         <img src="~/img/logo-med.svg" />  
         <h1 class="display-4">You're Smarter Than You <span>Book</span></h1>

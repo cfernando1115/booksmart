@@ -2,66 +2,95 @@
 
 <div class="container p-3">
     <h3 class="text-center">Your Book Bag</h3>
-    @if (Model.UnconfirmedShipments.Count > 0)
-    {
-        <h2>Unconfirmed Shipments</h2>
-        <div class="row mt-3">
-            @foreach (var shipBook in Model.UnconfirmedShipments)
+    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="unconfirmed shipments" aria-selected="true">Unconfirmed Shipments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="confirmed shipments" aria-selected="false">Confirmed Shipments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="unscheduled books" aria-selected="false">Unscheduled Books</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+            @if (Model.UnconfirmedShipments.Count > 0)
             {
-                <div class="text-center col-sm-4 mt-5">
-                    <img src="~/img/logo-small.svg" alt="@shipBook.Book.Name" />
-                    <h5 class="mt-3">@shipBook.Book.Name</h5>
-                    <p class="mb-1">@shipBook.Book.Author</p>
-                    <p class="mb-1">@shipBook.Book.Genre.Name</p>
-                    <p class="mb-0">@shipBook.Book.Price</p>
-                    <p><small><i> before membership discount</i></small></p>
-                    <button type="button" class="btn btn-primary mx-1" id="removeFromBagBtn" onclick="removeBookFromBag(@shipBook.Book.Id);">Remove From Bag</button>
+                <div class="row mt-3">
+                    @foreach (var shipBook in Model.UnconfirmedShipments)
+                    {
+                        <div class="text-center col-sm-4 mt-5">
+                            <img src="~/img/logo-small.svg" alt="@shipBook.Book.Name" />
+                            <h5 class="mt-3">@shipBook.Book.Name</h5>
+                            <p class="mb-1">@shipBook.Book.Author</p>
+                            <p class="mb-1">@shipBook.Book.Genre.Name</p>
+                            <p class="mb-0">Regular Price: <strike>$@shipBook.Book.Price</strike></p>
+                            <p class="mb-1"><small><i> before membership discount</i></small></p>
+                            <h5><i>Your Price: $@Math.Round((Model.DiscountRate * shipBook.Book.Price), 2)</i></h5>
+                            <button type="button" class="btn btn-primary mx-1" id="removeFromBagBtn" onclick="removeBookFromBag(@shipBook.Book.Id);">Remove From Bag</button>
+                        </div>
+                    }
                 </div>
             }
-        </div>
-    }
-    @if (Model.ConfirmedShipments.Count > 0)
-    {
-        <h2 class="mt-5">Confirmed Shipments</h2>
-        <p class="text-success">Note: Confirmed shipments are final</p>
-        <div class="row mt-3">
-            @foreach (var shipBook in Model.ConfirmedShipments)
+            else
             {
-                <div class="text-center col-sm-4 mt-5">
-                    <img src="~/img/logo-small.svg" alt="@shipBook.Book.Name" />
-                    <h5 class="mt-3">@shipBook.Book.Name</h5>
-                    <p class="mb-1">@shipBook.Book.Author</p>
-                    <p class="mb-1">@shipBook.Book.Genre.Name</p>
-                    <p class="mb-0">@shipBook.Book.Price</p>
-                    <p><small><i> before membership discount</i></small></p>
-                    <p class="mb-1 text-danger">Shipping @shipBook.ShipDate</p>
-                </div>
+                <p class="mt-3">You have no unconfirmed shipments</p>
             }
         </div>
-    }
-    @if (Model.UnscheduledBooks.Count > 0)
-    {
-        <h2 class="row mt-5">Unscheduled Shipments</h2>
-        <div class="text-center row mt-3">
-            @foreach (var book in Model.UnscheduledBooks)
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            @if (Model.ConfirmedShipments.Count > 0)
             {
-                <div class="text-center col-sm-4 mt-5">
-                    <img src="~/img/logo-small.svg" alt="@book.Name" />
-                    <h5 class="mt-3">@book.Name</h5>
-                    <p class="mb-1">@book.Author</p>
-                    <p class="mb-1">@book.Genre.Name</p>
-                    <p class="mb-0">@book.Price</p>
-                    <p><small><i> before membership discount</i></small></p>
-                    <button type="button" class="btn btn-primary mx-1" id="removeFromBagBtn" onclick="removeBookFromBag(@book.Id);">Remove From Bag</button>
+                <div class="row mt-3">
+                    @foreach (var shipBook in Model.ConfirmedShipments)
+                    {
+                        <div class="text-center col-sm-4 mt-5">
+                            <img src="~/img/logo-small.svg" alt="@shipBook.Book.Name" />
+                            <h5 class="mt-3">@shipBook.Book.Name</h5>
+                            <p class="mb-1">@shipBook.Book.Author</p>
+                            <p class="mb-1">@shipBook.Book.Genre.Name</p>
+                            <p class="mb-0">Regular Price: <strike>$@shipBook.Book.Price</strike></p>
+                            <p class="mb-1"><small><i> before membership discount</i></small></p>
+                            <h5><i>Your Price: $@Math.Round((Model.DiscountRate * shipBook.Book.Price), 2)</i></h5>
+                            <p class="mb-1 text-danger">Shipping @shipBook.ShipDate</p>
+                        </div>
+                    }
                 </div>
+                <hr />
+                <p class="text-success mt-3"><i>Note: Confirmed shipments are final</i></p>
+            }
+            else
+            {
+                <p class="mt-3">You have no confirmed shipments</p>
             }
         </div>
-    }
-    @if (Model.ConfirmedShipments.Count == 0 && Model.UnconfirmedShipments.Count == 0 && Model.UnscheduledBooks.Count == 0)
-    {
-        <p class="text-center">Your bag is empty</p>
-    }
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+            @if (Model.UnscheduledBooks.Count > 0)
+            {
+                <div class="text-center row mt-3">
+                    @foreach (var book in Model.UnscheduledBooks)
+                    {
+                        <div class="text-center col-sm-4 mt-5">
+                            <img src="~/img/logo-small.svg" alt="@book.Name" />
+                            <h5 class="mt-3">@book.Name</h5>
+                            <p class="mb-1">@book.Author</p>
+                            <p class="mb-1">@book.Genre.Name</p>
+                            <p class="mb-0">Regular Price: <strike>$@book.Price</strike></p>
+                            <p class="mb-1"><small><i> before membership discount</i></small></p>
+                            <h5><i>Your Price: $@Math.Round((Model.DiscountRate * book.Price), 2)</i></h5>
+                            <button type="button" class="btn btn-primary mx-1" id="removeFromBagBtn" onclick="removeBookFromBag(@book.Id);">Remove From Bag</button>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="mt-3">You have no unscheduled books</p>
+            }
+        </div>
+    </div>
 </div>
+
 
 @section Scripts{
     <script src="~/js/removeFromBag.js"></script>

@@ -1,23 +1,58 @@
 ﻿using BookSmart.Data;
+using BookSmart.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 
-namespace BookSmart.Models
+namespace BookSmart.SeedData
 {
-    public class SeedData
+    public class DbInitializer : IDbInitializer
     {
-        public static void InitializeMembershipTypes(IServiceProvider serviceProvider)
+        private readonly ApplicationDbContext _context;
+
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        private readonly RoleManager<AppRole> _roleManager;
+
+        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<AppRole> roleManager)
         {
-            using var context = new ApplicationDbContext(
-                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
-            if (context.MembershipTypes.Any())
+            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
+
+        public void Initialize()
+        {
+            try
+            {
+                if (_context.Database.GetPendingMigrations().Count() > 0)
+                {
+                    _context.Database.Migrate();
+                }
+            }
+            catch (Exception) { }
+
+            if(_context.Roles.Any(r => r.Name == Utility.RoleHelper.Admin))
             {
                 return;
             }
 
-            context.MembershipTypes.AddRange(
+            _roleManager.CreateAsync(new AppRole { Name = Utility.RoleHelper.Admin }).GetAwaiter().GetResult();
+            _roleManager.CreateAsync(new AppRole { Name = Utility.RoleHelper.Member }).GetAwaiter().GetResult();
+
+            _userManager.CreateAsync(new ApplicationUser
+            {
+                UserName = "admin@gmail.com",
+                Email = "admin@gmail.com",
+                EmailConfirmed = true,
+                Name = "Admin"
+            }, Environment.Env.Password).GetAwaiter().GetResult();
+
+            ApplicationUser user = _context.Users.FirstOrDefault(u => u.Email == "admin@gmail.com");
+            _userManager.AddToRoleAsync(user, Utility.RoleHelper.Admin).GetAwaiter().GetResult();
+
+            _context.MembershipTypes.AddRange(
                 new MembershipType
                 {
                     Name = "I Don't Like Discounts",
@@ -43,19 +78,8 @@ namespace BookSmart.Models
                     DiscountPercentage = 40,
                 }
             );
-            context.SaveChanges();
-        }
 
-        public static void InitializeGenres(IServiceProvider serviceProvider)
-        {
-            using var context = new ApplicationDbContext(
-                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
-            if (context.Genres.Any())
-            {
-                return;
-            }
-
-            context.Genres.AddRange(
+            _context.Genres.AddRange(
                 new Genre
                 {
                     Name = "History"
@@ -109,19 +133,8 @@ namespace BookSmart.Models
                     Name = "Thriller"
                 }
             );
-            context.SaveChanges();
-        }
 
-        public static void InitializeBooks(IServiceProvider serviceProvider)
-        {
-            using var context = new ApplicationDbContext(
-                serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
-            if (context.Books.Any())
-            {
-                return;
-            }
-
-            context.Books.AddRange(
+            _context.Books.AddRange(
                 new Book
                 {
                     Name = "Book1",
@@ -207,7 +220,7 @@ namespace BookSmart.Models
                     GenreId = 13
                 }
             );
-            context.SaveChanges();
+                _context.SaveChangesAsync().GetAwaiter().GetResult();
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using BookSmart.Data;
 using BookSmart.Models;
 using BookSmart.Services;
+using BookSmart.SeedData;
 
 namespace BookSmart
 {
@@ -26,6 +27,10 @@ namespace BookSmart
 
             services.AddApplicationServices(_configuration);
 
+            services.AddIdentityServices(_configuration);
+
+            services.AddScoped<IDbInitializer, DbInitializer>();
+
             services.AddIdentity<ApplicationUser, AppRole>()
                 .AddRoles<AppRole>()
                 .AddRoleManager<RoleManager<AppRole>>()
@@ -35,10 +40,16 @@ namespace BookSmart
                 .AddDefaultTokenProviders();
 
             services.AddHttpContextAccessor();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/Home/AccessDenied");
+                options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDbInitializer dbInitializer)
         {
             if (env.IsDevelopment())
             {
@@ -58,6 +69,8 @@ namespace BookSmart
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            dbInitializer.Initialize();
 
             app.UseEndpoints(endpoints =>
             {

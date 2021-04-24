@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookSmart.Models;
 using BookSmart.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookSmart.Controllers
 {
+    [Authorize]
     [Route("Member")]
     public class MemberController : Controller
     {
@@ -18,6 +20,7 @@ namespace BookSmart.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<ActionResult> Index()
         {
             var members = await _unitOfWork.MemberService.GetMembersWithMembershipTypeAsync();
@@ -30,29 +33,12 @@ namespace BookSmart.Controllers
             var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
             if(member != null)
             {
-                var confirmedShipments = member.Shipments?.Where(s => s.IsConfirmed == true)
-                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd") })
-                    .ToList();
-
-                var unconfirmedShipments = member.Shipments?.Where(s => s.IsConfirmed == false && s.ShipDate != null)
-                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd") })
-                    .ToList();
-
-                var unscheduledBooks = member.Books?.Where(b => member.Shipments.SingleOrDefault(s => s.BookId == b.Id) == null).ToList();
-
-                var memberBagModel = new MemberBagViewModel
-                {
-                    Member = member,
-                    ConfirmedShipments = confirmedShipments,
-                    UnconfirmedShipments = unconfirmedShipments,
-                    UnscheduledBooks = unscheduledBooks
-                };
-
-                return View(memberBagModel);
+                return View(_unitOfWork.MemberService.BuildMemberBag(member));
             }
             return RedirectToAction("Login", "Account");
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("Update/{id?}")]
         public async Task<ActionResult<MemberUpdateViewModel>> Update(int? id)
         {
@@ -79,6 +65,7 @@ namespace BookSmart.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("Update/{id?}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(MemberUpdateViewModel viewModel)
@@ -101,6 +88,7 @@ namespace BookSmart.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("Delete/{id?}")]
         public async Task<ActionResult<Member>> Delete(int? id)
         {
@@ -119,6 +107,7 @@ namespace BookSmart.Controllers
             return View(member);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("Delete/{id?}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMember(int? id)

@@ -1,10 +1,12 @@
 ﻿using BookSmart.Interfaces;
 using BookSmart.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace BookSmart.Controllers
 {
+    [Authorize]
     [Route("Shipment")]
     public class ShipmentController : Controller
     {

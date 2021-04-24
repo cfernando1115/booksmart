@@ -12,5 +12,7 @@ namespace BookSmart.ViewModels
         public List<ShipmentBookViewModel> ConfirmedShipments { get; set; }
 
         public List<ShipmentBookViewModel> UnconfirmedShipments { get; set; }
+
+        public double DiscountRate { get; set; }
     }
 }

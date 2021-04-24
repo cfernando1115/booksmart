@@ -50,7 +50,7 @@ namespace BookSmart.Controllers
                         return RedirectToAction("Featured", "Book");
                     }
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Member");
                 }
 
                 ModelState.AddModelError("", "Invalid login");
@@ -59,19 +59,13 @@ namespace BookSmart.Controllers
         }
 
         [HttpGet("Register")]
-        public async Task<ActionResult<RegisterViewModel>> Register()
+        public ActionResult<RegisterViewModel> Register()
         {
-            if (!_roleManager.RoleExistsAsync(Utility.RoleHelper.Admin).GetAwaiter().GetResult())
-            {
-                await _roleManager.CreateAsync(new AppRole { Name = Utility.RoleHelper.Admin });
-                await _roleManager.CreateAsync(new AppRole { Name = Utility.RoleHelper.Member });
-            }
-            var membershipTypes = _unitOfWork.MembershipTypes.GetAll().ToList();
-
             var viewModel = new RegisterViewModel
             {
-                MembershipTypes = membershipTypes
+                MembershipTypes = _unitOfWork.MembershipTypes.GetAll().ToList()
             };
+
             return View(viewModel);
         }
 
@@ -110,7 +104,15 @@ namespace BookSmart.Controllers
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, registerModel.RoleName);
-                    await _signInManger.SignInAsync(user, isPersistent: false);
+                    if (!User.IsInRole(Utility.RoleHelper.Admin))
+                    {
+                        await _signInManger.SignInAsync(user, isPersistent: false);
+                    }
+                    else
+                    {
+                        TempData["newAdminSignUp"] = user.Name;
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
 

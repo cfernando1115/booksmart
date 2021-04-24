@@ -7,9 +7,11 @@ using BookSmart.ViewModels;
 using BookSmart.Interfaces;
 using BookSmart.Extensions;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookSmart.Controllers
 {
+    [Authorize]
     [Route("Book")]
     public class BookController : Controller
     {
@@ -46,6 +48,7 @@ namespace BookSmart.Controllers
             return View(memberBooksModel);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("Create")]
         public ActionResult<BookFormViewModel> Create()
         {
@@ -58,6 +61,7 @@ namespace BookSmart.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(BookFormViewModel model)
@@ -81,6 +85,7 @@ namespace BookSmart.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("Delete/{id?}")]
         public async Task<ActionResult<Book>> Delete(int? id)
         {
@@ -99,6 +104,7 @@ namespace BookSmart.Controllers
             return View(book);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("Delete/{id?}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteBook(int? id)
@@ -117,6 +123,7 @@ namespace BookSmart.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet("Update/{id?}")]
         public async Task<ActionResult<BookFormViewModel>> Update(int? id)
         {
@@ -143,6 +150,7 @@ namespace BookSmart.Controllers
             return View(viewModel);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("Update/{id?}")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Update(BookFormViewModel viewModel)

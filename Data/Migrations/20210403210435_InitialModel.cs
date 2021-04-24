@@ -203,7 +203,7 @@ namespace BookSmart.Data.Migrations
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<float>(type: "real", nullable: false),
                     DateAdded = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
+                    GenreId = table.Column<int>(type: "int", nullable: true),
                     MemberId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>

@@ -29,18 +29,17 @@ namespace BookSmart.Controllers.Api
             try
             {
                 var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAsync(User.GetUsername());
-                var bookToAdd = _unitOfWork.BookService.Get(bookId);
-                if (member.Books.Contains(bookToAdd))
+                var result = await _unitOfWork.MemberService.AddToBagAsync(member, bookId);
+
+                if (result == 2)
                 {
                     response.Message = Utility.ResponseHelper.BookAlreadyInBag;
                     response.Status = Utility.ResponseHelper.FailureCode;
                     return Ok(response);
                 }
-                member.Books.Add(bookToAdd);
+
                 response.Message = Utility.ResponseHelper.BookAddedToBag;
                 response.Status = Utility.ResponseHelper.SuccessCode;
-
-                await _unitOfWork.CompleteAsync();
 
                 return Ok(response);
             }
@@ -61,25 +60,15 @@ namespace BookSmart.Controllers.Api
             try
             {
                 var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
-                var bookToRemove = _unitOfWork.BookService.Get(bookId);
-                if (member.Books.Contains(bookToRemove))
+                var result = await _unitOfWork.MemberService.RemoveFromBagAsync(member, bookId);
+                if (result == 1)
                 {
-                    member.Books.Remove(bookToRemove);
-
-                    var shipment = member.Shipments.FirstOrDefault(s => s.BookId == bookToRemove.Id);
-                    if(shipment != null)
-                    {
-                        member.Shipments.Remove(shipment);
-                        await _unitOfWork.ShipmentService.DeleteShipment(shipment.Id);
-                    }
-
                     response.Message = Utility.ResponseHelper.BookRemovedFromBag;
                     response.Status = Utility.ResponseHelper.SuccessCode;
 
-                    await _unitOfWork.CompleteAsync();
-
                     return Ok(response);
                 }
+
                 response.Message = Utility.ResponseHelper.BookIsNotInBag;
                 response.Status = Utility.ResponseHelper.FailureCode;
 

@@ -28,7 +28,6 @@ namespace BookSmart.Models
         [ForeignKey("GenreId")]
         public Genre Genre { get; set; }
 
-        [Required]
         [DisplayName("Genre")]
         public int GenreId { get; set; }
 
