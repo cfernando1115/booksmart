@@ -6,22 +6,22 @@
     <form method="post" id="logoutForm" asp-action="Logout" asp-controller="Account">
         <ul class="nav navbar-nav">
             <li class="text-white nav-link mr-2">Hello, @User.Identity.Name</li>
-            <li class="nav-link">
-                <a class="text-white mr-2" id="booksLink" asp-controller="Book" asp-action="Index">Books</a>
+            <li class="nav-item">
+                <a class="text-white mr-2 nav-link" id="booksLink" asp-controller="Book" asp-action="Index">Books</a>
             </li>
             @if (User.IsInRole(BookSmart.Utility.RoleHelper.Member))
             {
-                <li class="nav-link">
-                    <a class="text-white" id="calendarLink" asp-route-id="@userManager.GetUserId(User)" asp-controller="Shipment" asp-action="Calendar">Manage shipping</a>
+                <li class="nav-item">
+                    <a class="text-white nav-link" id="calendarLink" asp-route-id="@userManager.GetUserId(User)" asp-controller="Shipment" asp-action="Calendar">Manage shipping</a>
                 </li>
-                <li class="nav-link">
-                    <a class="text-white" id="bookBagLink" asp-controller="Member" asp-action="Bag">Your Bag</a>
+                <li class="nav-item">
+                    <a class="text-white nav-link" id="bookBagLink" asp-controller="Member" asp-action="Bag">Your Bag</a>
                 </li>
             }
             @if (User.IsInRole(BookSmart.Utility.RoleHelper.Admin))
             {
-                <li class="nav-link">
-                    <a class="text-white" id="membersLink" asp-controller="Member" asp-action="Index">Members</a>
+                <li class="nav-item">
+                    <a class="text-white nav-link" id="membersLink" asp-controller="Member" asp-action="Index">Members</a>
                 </li>
             }
             <li class="ml-2"><button class="btn btn-success" type="submit">Log Out</button></li>

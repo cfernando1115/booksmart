@@ -9,7 +9,6 @@ $(document).ready(function () {
         value: new Date(),
         dateInput: false
     });
-
 });
 
 let events = [];
@@ -30,6 +29,12 @@ function initializeCalendar() {
                     right: 'dayGridMonth, timeGridWeek, timeGridDay'
                 },
                 selectable: true,
+                validRange: function (nowDate) {
+                    return {
+                        start: nowDate,
+                        end: Date.parse($('#membershipExpiration').val())
+                    };
+                },
                 editable: false,
                 select: function (event) {
                     openModal(event, null);

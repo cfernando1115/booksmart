@@ -129,8 +129,11 @@ namespace BookSmart.Controllers.Api
                 }
                 else
                 {
+                    requestResponse.Message = result == -1 
+                        ? Utility.ResponseHelper.ShipmentOverBooksRemainingError 
+                        : Utility.ResponseHelper.ShipmentConfirmError;
+
                     requestResponse.Status = Utility.ResponseHelper.FailureCode;
-                    requestResponse.Message = Utility.ResponseHelper.ShipmentConfirmError;
                 }
             }
             catch(Exception ex)

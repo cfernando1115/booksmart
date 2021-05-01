@@ -85,7 +85,9 @@ namespace BookSmart.Controllers
                         Email = registerModel.Email,
                         Name = registerModel.Name,
                         MembershipTypeId = registerModel.MembershipTypeId,
-                        BooksRemaining = membershipType.BooksPerYear
+                        BooksRemaining = membershipType.BooksPerYear,
+                        SignUpDate = DateTime.Now.Date,
+                        MembershipExpiration = DateTime.Today.AddYears(1)
                     };
                 }
                 else

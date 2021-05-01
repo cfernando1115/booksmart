@@ -165,12 +165,12 @@ body {
 
 
 .home-banner {
-    background-color: #f6f6f6;
+    background-color: #001aff1A;
     padding: 15px;
 }
 
 .home-banner span {
-    color: blue;
+    color: #001aff;
 }
 
 .home-banner h3 {

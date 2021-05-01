@@ -15,6 +15,10 @@ namespace BookSmart.Models
 
         public ICollection<Shipment> Shipments { get; set; } = new List<Shipment>();
 
+        public DateTime SignUpDate { get; set; }
+
+        public DateTime MembershipExpiration { get; set; }
+
         public DateTime? LastLogin { get; set; }
 
         [ForeignKey("MembershipTypeId")]

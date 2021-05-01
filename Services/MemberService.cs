@@ -68,10 +68,10 @@ namespace BookSmart.Services
                 {
                     member.Shipments.Remove(shipment);
                     ApplicationDbContext.Shipments.Remove(shipment);
-
-                    await ApplicationDbContext.SaveChangesAsync();
-                    return 1;
                 }
+
+                await ApplicationDbContext.SaveChangesAsync();
+                return 1;
             }
             return 2;
         }

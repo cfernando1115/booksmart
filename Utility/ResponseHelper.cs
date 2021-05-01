@@ -27,7 +27,8 @@ namespace BookSmart.Utility
         public static string ShipmentUpdateError = "Failed to update shipment, Please try again.";
         public static string ShipmentAddError = "Failed to add shipment, Please try again.";
         public static string ShipmentDeleteError = "Failed to delete shipment, Please try again.";
-        public static string ShipmentConfirmError = "Failed to update shipment, Please try again.";
+        public static string ShipmentConfirmError = "Failed to confirm shipment, Please try again.";
+        public static string ShipmentOverBooksRemainingError = "You have met your membership book limit.";
         public static string SomethingWentWrong = "Something went wrong, Please try again.";
 
         public static int SuccessCode = 1;

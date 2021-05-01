@@ -107,6 +107,10 @@ namespace BookSmart.Services
                     .FirstOrDefault(m => m.Id == shipment.MemberId);
                 if(member.MembershipType.Id != 1)
                 {
+                    if(member.BooksRemaining == 0)
+                    {
+                        return -1;
+                    }
                     member.BooksRemaining--;
                 }
                 return await ApplicationDbContext.SaveChangesAsync();
