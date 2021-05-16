@@ -5,6 +5,7 @@ using BookSmart.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using System.Linq;
+using BookSmart.Utility;
 
 namespace BookSmart.Data
 {
@@ -19,11 +20,12 @@ namespace BookSmart.Data
             get { return Context as ApplicationDbContext; }
         }
 
-        public async Task<IEnumerable<Book>> GetBooksWithGenresAsync() 
+        public async Task<PagedList<Book>> GetBooksWithGenresAsync(BookParams bookParams) 
         {
-            return await ApplicationDbContext.Books
-                .Include(b => b.Genre)
-                .ToListAsync();
+            var query = ApplicationDbContext.Books
+                .Include(b => b.Genre);
+
+            return await PagedList<Book>.CreateAsync(query, bookParams.PageNumber, bookParams.PageSize);
         }
 
         public async Task<Book> GetBookWithGenreAsync(int? id)

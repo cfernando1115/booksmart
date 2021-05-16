@@ -2,6 +2,7 @@
 using BookSmart.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
@@ -15,11 +16,14 @@ namespace BookSmart.SeedData
 
         private readonly RoleManager<AppRole> _roleManager;
 
-        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<AppRole> roleManager)
+        private readonly IConfiguration _config;
+
+        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<AppRole> roleManager, IConfiguration config )
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _config = config;
         }
 
         public void Initialize()
@@ -43,13 +47,13 @@ namespace BookSmart.SeedData
 
             _userManager.CreateAsync(new ApplicationUser
             {
-                UserName = "admin@gmail.com",
-                Email = "admin@gmail.com",
+                UserName = _config.GetValue<string>("SeedAdmin:Email"),
+                Email = _config.GetValue<string>("SeedAdmin:Email"),
                 EmailConfirmed = true,
-                Name = "Admin"
-            }, Environment.Env.Password).GetAwaiter().GetResult();
+                Name = _config.GetValue<string>("SeedAdmin:Name")
+            }, _config.GetValue<string>("SeedAdmin:Password")).GetAwaiter().GetResult();
 
-            ApplicationUser user = _context.Users.FirstOrDefault(u => u.Email == "admin@gmail.com");
+            ApplicationUser user = _context.Users.FirstOrDefault(u => u.Email == _config.GetValue<string>("SeedAdmin:Email"));
             _userManager.AddToRoleAsync(user, Utility.RoleHelper.Admin).GetAwaiter().GetResult();
 
             _context.MembershipTypes.AddRange(
@@ -78,6 +82,8 @@ namespace BookSmart.SeedData
                     DiscountPercentage = 40,
                 }
             );
+
+            _context.SaveChangesAsync().GetAwaiter().GetResult();
 
             _context.Genres.AddRange(
                 new Genre
@@ -133,6 +139,8 @@ namespace BookSmart.SeedData
                     Name = "Thriller"
                 }
             );
+
+            _context.SaveChangesAsync().GetAwaiter().GetResult();
 
             _context.Books.AddRange(
                 new Book

@@ -70,7 +70,7 @@ namespace BookSmart
 
             app.UseAuthorization();
 
-            //dbInitializer.Initialize();
+            dbInitializer.Initialize();
 
             app.UseEndpoints(endpoints =>
             {

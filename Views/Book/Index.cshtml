@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookSmart.Models.Book>
+﻿@model BookSmart.Utility.PagedList<BookSmart.Models.Book>
 
 <div class="container p-3">
     <div class="row pt-4">
@@ -61,6 +61,28 @@
                 }
             </tbody>
         </table>
+
+        <nav aria-label="Page navigation">
+            <p><small>Page <span class="currentPage">@Model.CurrentPage</span> of <span class="totalPages">@Model.TotalPages</span> pages</small></p>
+            <ul class="pagination justify-content-center">
+                <li class="page-item" id="first">
+                    <a class="page-link" asp-controller="Book" asp-action="Index" asp-route-pageNumber="1" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                @for (var i = 0; i < @Model.TotalPages; i++)
+                {
+                    <li class="page-item pageBtn" data-page="@(i+1)"><a class="page-link" asp-controller="Book" asp-action="Index" asp-route-pageNumber="@(i + 1)">@(i+1)</a></li>
+                }
+                <li class="page-item" id="last">
+                    <a class="page-link" asp-controller="Book" asp-action="Index" asp-route-pageNumber="@Model.TotalPages" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     }
     else
     {
@@ -70,4 +92,5 @@
 
 @section Scripts{
     <script src="~/js/addToBag.js"></script>
+    <script src="~/js/pagination.js"></script>
 }

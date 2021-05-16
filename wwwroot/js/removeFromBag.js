@@ -11,7 +11,7 @@ function removeBookFromBag(bookId) {
                 }
                 else {
                     $.notify(response.message, 'success');
-                    location.href = `${routeURL}/Member/Bag`;
+                    $(`#${bookId}`).remove();
                 }
             },
             failure: function (response) {

@@ -2,19 +2,19 @@
 
 <div class="container p-3">
     <h3 class="text-center">Your Book Bag</h3>
-    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+    <ul class="nav nav-tabs mt-3" id="bagTabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="unconfirmed shipments" aria-selected="true">Unconfirmed Shipments</a>
+            <a class="nav-link active" id="unconfirmed-tab" data-toggle="tab" href="#unconfirmed" role="tab" aria-controls="unconfirmed shipments" aria-selected="true">Unconfirmed Shipments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="confirmed shipments" aria-selected="false">Confirmed Shipments</a>
+            <a class="nav-link" id="confirmed-tab" data-toggle="tab" href="#confirmed" role="tab" aria-controls="confirmed shipments" aria-selected="false">Confirmed Shipments</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="unscheduled books" aria-selected="false">Unscheduled Books</a>
+            <a class="nav-link" id="unscheduled-tab" data-toggle="tab" href="#unscheduled" role="tab" aria-controls="unscheduled books" aria-selected="false">Unscheduled Books</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade show active" id="unconfirmed" role="tabpanel" aria-labelledby="unconfirmed-shipments-tab">
             @if (Model.UnconfirmedShipments.Count > 0)
             {
                 <div class="row mt-3">
@@ -38,7 +38,7 @@
                 <p class="mt-3">You have no unconfirmed shipments</p>
             }
         </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade" id="confirmed" role="tabpanel" aria-labelledby="confirmed-shipments-tab">
             @if (Model.ConfirmedShipments.Count > 0)
             {
                 <div class="row mt-3">
@@ -57,20 +57,20 @@
                     }
                 </div>
                 <hr />
-                <p class="text-success mt-3"><i>Note: Confirmed shipments are final</i></p>
+                <p class="text-primary mt-3"><i>Note: Confirmed shipments are final</i></p>
             }
             else
             {
                 <p class="mt-3">You have no confirmed shipments</p>
             }
         </div>
-        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="unscheduled" role="tabpanel" aria-labelledby="unscheduled-books-tab">
             @if (Model.UnscheduledBooks.Count > 0)
             {
                 <div class="text-center row mt-3">
                     @foreach (var book in Model.UnscheduledBooks)
                     {
-                        <div class="text-center col-sm-4 mt-5">
+                        <div class="text-center col-sm-4 mt-5 book" id="@book.Id">
                             <img src="~/img/logo-small.svg" alt="@book.Name" />
                             <h5 class="mt-3">@book.Name</h5>
                             <p class="mb-1">@book.Author</p>

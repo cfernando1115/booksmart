@@ -8,6 +8,8 @@ using BookSmart.Interfaces;
 using BookSmart.Extensions;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using BookSmart.Utility;
+using Microsoft.Extensions.Configuration;
 
 namespace BookSmart.Controllers
 {
@@ -16,15 +18,23 @@ namespace BookSmart.Controllers
     public class BookController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _config;
 
-        public BookController(IUnitOfWork unitOfWork)
+        public BookController(IUnitOfWork unitOfWork, IConfiguration config)
         {
             _unitOfWork = unitOfWork;
+            _config = config;
         }
 
-        public async Task<ActionResult<IEnumerable<Book>>> Index()
+        public async Task<ActionResult<IEnumerable<Book>>> Index(int? pageNumber, int? pageSize)
         {
-            var books = await _unitOfWork.BookService.GetBooksWithGenresAsync();
+            var bookParams = new BookParams
+            {
+                PageNumber = pageNumber ?? 1,
+                PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("BookPagination:PageSize"))
+            };
+
+            var books = await _unitOfWork.BookService.GetBooksWithGenresAsync(bookParams);
             return View(books);
         }
 
