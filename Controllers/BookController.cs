@@ -26,16 +26,22 @@ namespace BookSmart.Controllers
             _config = config;
         }
 
-        public async Task<ActionResult<IEnumerable<Book>>> Index(int? pageNumber, int? pageSize)
+        public async Task<ActionResult<BookFilterViewModel>> Index([FromQuery]int? pageNumber, int? genreId, int? pageSize)
         {
             var bookParams = new BookParams
             {
                 PageNumber = pageNumber ?? 1,
-                PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("BookPagination:PageSize"))
+                PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("BookPagination:PageSize")),
+                GenreId = genreId ?? 0
             };
 
-            var books = await _unitOfWork.BookService.GetBooksWithGenresAsync(bookParams);
-            return View(books);
+            var bookFilterViewModel = new BookFilterViewModel
+            {
+                Books = await _unitOfWork.BookService.GetBooksWithGenresAsync(bookParams),
+                Genres = _unitOfWork.Genres.GetAll()
+            };
+            
+        return View(bookFilterViewModel);
         }
 
         [HttpGet("Featured")]

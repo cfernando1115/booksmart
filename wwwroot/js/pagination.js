@@ -26,3 +26,4 @@ if (currentPage === totalPages && totalPages > 1) {
     firstBtn.removeClass('disabled');
 }
 
+

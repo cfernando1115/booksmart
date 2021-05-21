@@ -22,8 +22,13 @@ namespace BookSmart.Data
 
         public async Task<PagedList<Book>> GetBooksWithGenresAsync(BookParams bookParams) 
         {
-            var query = ApplicationDbContext.Books
+            IQueryable<Book> query = ApplicationDbContext.Books
                 .Include(b => b.Genre);
+            
+            if(bookParams.GenreId != 0)
+            {
+                query = query.Where(b => b.GenreId == bookParams.GenreId);
+            }
 
             return await PagedList<Book>.CreateAsync(query, bookParams.PageNumber, bookParams.PageSize);
         }

@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace BookSmart.Utility
 {
-    public class BookParams : Pagination
+    public class MemberParams : Pagination
     {
-        public int GenreId { get; set; } = 0;
     }
 }

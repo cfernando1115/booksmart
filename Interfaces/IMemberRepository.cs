@@ -1,4 +1,5 @@
 ﻿using BookSmart.Models;
+using BookSmart.Utility;
 using Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace BookSmart.Interfaces
 
         Task<Member> GetMemberByIdWithBooksAsync(int id);
 
-        Task<IEnumerable<Member>> GetMembersWithMembershipTypeAsync();
+        Task<PagedList<Member>> GetMembersWithMembershipTypeAsync(MemberParams memberParams);
 
         Task<Member> GetMemberWithMembershipTypeAsync(int id);
     }

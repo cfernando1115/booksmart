@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 using BookSmart.Models;
 using BookSmart.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using BookSmart.Utility;
+using System;
+using Microsoft.Extensions.Configuration;
 
 namespace BookSmart.Controllers
 {
@@ -14,16 +18,24 @@ namespace BookSmart.Controllers
     public class MemberController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _config;
 
-        public MemberController(IUnitOfWork unitOfWork)
+        public MemberController(IUnitOfWork unitOfWork, IConfiguration config)
         {
             _unitOfWork = unitOfWork;
+            _config = config;
         }
 
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult<IEnumerable<Member>>> Index(int? pageNumber, int? pageSize)
         {
-            var members = await _unitOfWork.MemberService.GetMembersWithMembershipTypeAsync();
+            var memberParams = new MemberParams
+            {
+                PageNumber = pageNumber ?? 1,
+                PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("MemberPagination:PageSize"))
+            };
+
+            var members = await _unitOfWork.MemberService.GetMembersWithMembershipTypeAsync(memberParams);
             return View(members);
         }
 

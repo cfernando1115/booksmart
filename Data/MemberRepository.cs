@@ -1,5 +1,6 @@
 ﻿using BookSmart.Interfaces;
 using BookSmart.Models;
+using BookSmart.Utility;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using System.Collections.Generic;
@@ -38,11 +39,12 @@ namespace BookSmart.Data
                 .SingleOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<IEnumerable<Member>> GetMembersWithMembershipTypeAsync()
+        public async Task<PagedList<Member>> GetMembersWithMembershipTypeAsync(MemberParams memberParams)
         {
-            return await ApplicationDbContext.Members
-                .Include(m => m.MembershipType)
-                .ToListAsync();
+            var query = ApplicationDbContext.Members
+                .Include(m => m.MembershipType);
+
+            return await PagedList<Member>.CreateAsync(query, memberParams.PageNumber, memberParams.PageSize);
         }
 
         public async Task<Member> GetMemberWithMembershipTypeAsync(int id)
