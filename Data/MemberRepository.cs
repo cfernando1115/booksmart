@@ -10,22 +10,23 @@ namespace BookSmart.Data
 {
     public class MemberRepository : Repository<Member>, IMemberRepository
     {
-        public MemberRepository(ApplicationDbContext context)
-            : base(context) { }
+        private readonly ApplicationDbContext _context;
 
-        public ApplicationDbContext ApplicationDbContext
+        public MemberRepository(ApplicationDbContext context)
+            : base(context) 
         {
-            get { return Context as ApplicationDbContext; }
+            _context = context;
         }
+
 
         public async Task<Member> GetMemberByUsernameAsync(string username)
         {
-            return await ApplicationDbContext.Members.SingleOrDefaultAsync(u => u.UserName == username);
+            return await _context.Members.SingleOrDefaultAsync(u => u.UserName == username);
         }
 
         public async Task<Member> GetMemberByUsernameWithBooksAsync(string username)
         {
-            return await ApplicationDbContext.Members
+            return await _context.Members
                 .Include(m => m.Books)
                 .ThenInclude(b => b.Genre)
                 .SingleOrDefaultAsync(u => u.UserName == username);
@@ -34,14 +35,14 @@ namespace BookSmart.Data
 
         public async Task<Member> GetMemberByIdWithBooksAsync(int id)
         {
-            return await ApplicationDbContext.Members
+            return await _context.Members
                 .Include(m => m.Books)
                 .SingleOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<PagedList<Member>> GetMembersWithMembershipTypeAsync(MemberParams memberParams)
         {
-            var query = ApplicationDbContext.Members
+            var query = _context.Members
                 .Include(m => m.MembershipType);
 
             return await PagedList<Member>.CreateAsync(query, memberParams.PageNumber, memberParams.PageSize);
@@ -49,7 +50,7 @@ namespace BookSmart.Data
 
         public async Task<Member> GetMemberWithMembershipTypeAsync(int id)
         {
-            return await ApplicationDbContext.Members
+            return await _context.Members
                 .Include(m => m.MembershipType)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }

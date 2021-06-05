@@ -35,11 +35,18 @@ namespace BookSmart.Controllers.Api
                 {
                     response.Message = Utility.ResponseHelper.BookAlreadyInBag;
                     response.Status = Utility.ResponseHelper.FailureCode;
-                    return Ok(response);
                 }
 
-                response.Message = Utility.ResponseHelper.BookAddedToBag;
-                response.Status = Utility.ResponseHelper.SuccessCode;
+                else
+                {
+                    response.Message = Utility.ResponseHelper.BookAddedToBag;
+                    response.Status = Utility.ResponseHelper.SuccessCode;
+                }
+
+                if (_unitOfWork.HasChanges())
+                {
+                    await _unitOfWork.CompleteAsync();
+                }
 
                 return Ok(response);
             }
@@ -65,12 +72,18 @@ namespace BookSmart.Controllers.Api
                 {
                     response.Message = Utility.ResponseHelper.BookRemovedFromBag;
                     response.Status = Utility.ResponseHelper.SuccessCode;
-
-                    return Ok(response);
                 }
 
-                response.Message = Utility.ResponseHelper.BookIsNotInBag;
-                response.Status = Utility.ResponseHelper.FailureCode;
+                else
+                {
+                    response.Message = Utility.ResponseHelper.BookIsNotInBag;
+                    response.Status = Utility.ResponseHelper.FailureCode;
+                }
+
+                if (_unitOfWork.HasChanges())
+                {
+                    await _unitOfWork.CompleteAsync();
+                }
 
                 return Ok(response);
             }

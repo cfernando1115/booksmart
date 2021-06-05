@@ -6,12 +6,11 @@ namespace BookSmart.Data
 {
     public class ShipmentRepository : Repository<Shipment>, IShipmentRepository
     {
+        private readonly ApplicationDbContext _context;
         public ShipmentRepository(ApplicationDbContext context)
-            : base(context) { }
-
-        public ApplicationDbContext ApplicationDbContext
+            : base(context) 
         {
-            get { return Context as ApplicationDbContext; }
+            _context = context;
         }
     }
 }

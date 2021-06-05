@@ -47,6 +47,11 @@ namespace BookSmart.Controllers.Api
                 {
                     requestResponse.Message = Utility.ResponseHelper.ShipmentAdded;
                 }
+
+                if (_unitOfWork.HasChanges())
+                {
+                    await _unitOfWork.CompleteAsync();
+                }
             }
             catch(Exception ex)
             {
@@ -105,6 +110,11 @@ namespace BookSmart.Controllers.Api
                 requestResponse.Message = requestResponse.Status == 1
                     ? Utility.ResponseHelper.ShipmentDeleted
                     : Utility.ResponseHelper.ShipmentDeleteError;
+
+                if(_unitOfWork.HasChanges())
+                {
+                    await _unitOfWork.CompleteAsync();
+                }
             }
             catch(Exception ex)
             {
@@ -126,6 +136,11 @@ namespace BookSmart.Controllers.Api
                 {
                     requestResponse.Status = result;
                     requestResponse.Message = Utility.ResponseHelper.ShipmentConfirmed;
+
+                    if (_unitOfWork.HasChanges())
+                    {
+                        await _unitOfWork.CompleteAsync();
+                    }
                 }
                 else
                 {

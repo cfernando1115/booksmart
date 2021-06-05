@@ -11,18 +11,18 @@ namespace BookSmart.Data
 {
     public class BookRepository : Repository<Book>, IBookRepository
     {
+        private readonly ApplicationDbContext _context;
 
         public BookRepository(ApplicationDbContext context)
-            : base(context) { }
-
-        public ApplicationDbContext ApplicationDbContext
+            : base(context) 
         {
-            get { return Context as ApplicationDbContext; }
+            _context = context;
         }
+
 
         public async Task<PagedList<Book>> GetBooksWithGenresAsync(BookParams bookParams) 
         {
-            IQueryable<Book> query = ApplicationDbContext.Books
+            IQueryable<Book> query = _context.Books
                 .Include(b => b.Genre);
             
             if(bookParams.GenreId != 0)
@@ -35,14 +35,14 @@ namespace BookSmart.Data
 
         public async Task<Book> GetBookWithGenreAsync(int? id)
         {
-            return await ApplicationDbContext.Books
+            return await _context.Books
                 .Include(b => b.Genre)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public IQueryable<Book> GetBooks()
         {
-            return ApplicationDbContext.Books.AsQueryable();
+            return _context.Books.AsQueryable();
         }
     }
 }

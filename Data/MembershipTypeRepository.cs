@@ -6,12 +6,12 @@ namespace BookSmart.Data
 {
     public class MembershipTypeRepository : Repository<MembershipType>, IMembershipTypeRepository
     {
-      public MembershipTypeRepository(ApplicationDbContext context)
-        : base(context) { }
+      private readonly ApplicationDbContext _context;
 
-        public ApplicationDbContext ApplicationDbContext
+      public MembershipTypeRepository(ApplicationDbContext context)
+            : base(context) 
         {
-            get { return Context as ApplicationDbContext; }
+            _context = context;
         }
     }
 }

@@ -11,12 +11,17 @@ namespace BookSmart.Services
 {
     public class BookService : BookRepository, IBookService
     {
+        private readonly ApplicationDbContext _context;
+
         public BookService(ApplicationDbContext context)
-    :        base(context) { }
+            : base(context) 
+        {
+            _context = context;
+        }
 
         public async Task<IEnumerable<Book>> GetBooksAfterDate(DateTime date, int maxNumberOfBooks)
         {
-            var numberOfBooks = await ApplicationDbContext.Books
+            var numberOfBooks = await _context.Books
                 .Where(b => b.DateAdded >= date)
                 .CountAsync();
 
@@ -24,7 +29,7 @@ namespace BookSmart.Services
             {
                 var booksToTake = DetermineBooksToTake(numberOfBooks, maxNumberOfBooks);
 
-                return await ApplicationDbContext.Books
+                return await _context.Books
                     .Where(b => b.DateAdded >= date)
                     .Include(b=>b.Genre)
                     .Take(booksToTake)
@@ -36,13 +41,13 @@ namespace BookSmart.Services
 
         public async Task<IEnumerable<Book>> GetBooksBeforeDate(DateTime date, int maxNumberOfBooks)
         {
-            var numberOfBooks = await ApplicationDbContext.Books
+            var numberOfBooks = await _context.Books
                 .Where(b => b.DateAdded < date)
                 .CountAsync();
 
             var booksToTake = DetermineBooksToTake(numberOfBooks, maxNumberOfBooks);
 
-            return await ApplicationDbContext.Books
+            return await _context.Books
                 .Where(b => b.DateAdded < date)
                 .Include(b => b.Genre)
                 .OrderByDescending(b => b.DateAdded)

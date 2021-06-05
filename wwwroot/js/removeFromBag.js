@@ -7,7 +7,7 @@ function removeBookFromBag(bookId) {
             type: 'POST',
             success: function (response) {
                 if (response.status === 0) {
-                    $.notify(response.message, 'success');
+                    $.notify(response.message, 'info');
                 }
                 else {
                     $.notify(response.message, 'success');

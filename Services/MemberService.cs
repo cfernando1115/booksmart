@@ -10,12 +10,18 @@ namespace BookSmart.Services
 {
     public class MemberService : MemberRepository, IMemberService
     {
+
+        private readonly ApplicationDbContext _context;
+
         public MemberService(ApplicationDbContext context)
-            : base(context) { }
+            : base(context) 
+        {
+            _context = context;
+        }
 
         public async Task<Member> GetMemberByUsernameWithBooksAndShipmentsAsync(string username)
         {
-            return await ApplicationDbContext.Members
+            return await _context.Members
                 .Include(m => m.Shipments)
                 .Include(m => m.MembershipType)
                 .Include(m => m.Books)
@@ -43,7 +49,7 @@ namespace BookSmart.Services
 
         public async Task<int> AddToBagAsync(Member member, int bookId)
         {
-            var bookToAdd = await ApplicationDbContext.Books.FindAsync(bookId);
+            var bookToAdd = await _context.Books.FindAsync(bookId);
 
             if (member.Books.Contains(bookToAdd))
             {
@@ -51,13 +57,13 @@ namespace BookSmart.Services
             }
 
             member.Books.Add(bookToAdd);
-            await ApplicationDbContext.SaveChangesAsync();
+
             return 1;
         }
 
         public async Task<int> RemoveFromBagAsync(Member member, int bookId)
         {
-            var bookToRemove = await ApplicationDbContext.Books.FindAsync(bookId);
+            var bookToRemove = await _context.Books.FindAsync(bookId);
 
             if (member.Books.Contains(bookToRemove))
             {
@@ -67,10 +73,9 @@ namespace BookSmart.Services
                 if (shipment != null)
                 {
                     member.Shipments.Remove(shipment);
-                    ApplicationDbContext.Shipments.Remove(shipment);
+                    _context.Shipments.Remove(shipment);
                 }
 
-                await ApplicationDbContext.SaveChangesAsync();
                 return 1;
             }
             return 2;

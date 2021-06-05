@@ -13,8 +13,12 @@ namespace BookSmart.Services
 {
     public class ShipmentService : ShipmentRepository, IShipmentService
     {
+        private readonly ApplicationDbContext _context;
         public ShipmentService(ApplicationDbContext context)
-            : base(context) { }
+            : base(context) 
+        {
+            _context = context;
+        }
 
         public async Task<int> AddUpdateAsync(ShipmentFormViewModel shipmentFormViewModel)
         {
@@ -22,13 +26,12 @@ namespace BookSmart.Services
 
             if (shipmentFormViewModel != null && shipmentFormViewModel.Id > 0)
             {
-                var shipment = ApplicationDbContext.Shipments.FirstOrDefault(s => s.Id == shipmentFormViewModel.Id);
+                var shipment = await _context.Shipments.FirstOrDefaultAsync(s => s.Id == shipmentFormViewModel.Id);
 
                 if(shipment != null)
                 {
                     shipment.ShipDate = shipDate;
                     shipment.IsConfirmed = shipmentFormViewModel.IsConfirmed;
-                    await ApplicationDbContext.SaveChangesAsync();
                     return 1;
                 }
             }
@@ -41,10 +44,9 @@ namespace BookSmart.Services
                     MemberId = JsonSerializer.Deserialize<int>(shipmentFormViewModel.MemberId)
                 };
 
-                var member = ApplicationDbContext.Members.FirstOrDefault(m => m.Id == Convert.ToInt32(shipmentFormViewModel.MemberId));
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.Id == Convert.ToInt32(shipmentFormViewModel.MemberId));
                 member?.Shipments.Add(shipment);
-                ApplicationDbContext.Shipments.Add(shipment);
-                await ApplicationDbContext.SaveChangesAsync();
+                _context.Shipments.Add(shipment);
                 return 2;
             }
 
@@ -53,7 +55,7 @@ namespace BookSmart.Services
 
         public List<ShipmentFormViewModel> ShipmentsByMemberId(int id)
         {
-            return ApplicationDbContext.Shipments.Include(b => b.Book).Where(s => s.MemberId == id)
+            return _context.Shipments.Include(b => b.Book).Where(s => s.MemberId == id)
                 .ToList()
                 .Select(s => new ShipmentFormViewModel
                 {
@@ -61,18 +63,18 @@ namespace BookSmart.Services
                     BookId = s.BookId.ToString(),
                     ShipDate = s.ShipDate.ToString("yyyy-MM-dd"),
                     IsConfirmed = s.IsConfirmed,
-                    BookName = ApplicationDbContext.Books.Where(b => b.Id == s.BookId).Select(b => b.Name).FirstOrDefault()
+                    BookName = _context.Books.Where(b => b.Id == s.BookId).Select(b => b.Name).FirstOrDefault()
                 }).ToList();
         }
 
         public async Task<List<Shipment>> ShipmentsWithBooksByMemberId(int id)
         {
-            return await ApplicationDbContext.Shipments.Include(s => s.Book).ThenInclude(b =>b.Genre).Where(s => s.MemberId == id).ToListAsync();
+            return await _context.Shipments.Include(s => s.Book).ThenInclude(b =>b.Genre).Where(s => s.MemberId == id).ToListAsync();
         }
 
         public ShipmentFormViewModel ShipmentById(int id)
         {
-            return ApplicationDbContext.Shipments.Where(s => s.Id == id)
+            return _context.Shipments.Where(s => s.Id == id)
                 .ToList()
                 .Select(s => new ShipmentFormViewModel
                 {
@@ -80,31 +82,31 @@ namespace BookSmart.Services
                     BookId = s.BookId.ToString(),
                     ShipDate = s.ShipDate.ToString("yyyy-MM-dd"),
                     IsConfirmed = s.IsConfirmed,
-                    BookName = ApplicationDbContext.Books.Where(b => b.Id == s.BookId).Select(b => b.Name).FirstOrDefault()
+                    BookName = _context.Books.Where(b => b.Id == s.BookId).Select(b => b.Name).FirstOrDefault()
                 }).SingleOrDefault();
         }
 
         public async Task<int> DeleteShipment(int id)
         {
-            var shipment = ApplicationDbContext.Shipments.FirstOrDefault(s => s.Id == id);
+            var shipment = await _context.Shipments.FirstOrDefaultAsync(s => s.Id == id);
             if(shipment != null)
             {
-                ApplicationDbContext.Shipments.Remove(shipment);
-                var member = ApplicationDbContext.Members.FirstOrDefault(m => m.Id == shipment.MemberId);
+                _context.Shipments.Remove(shipment);
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.Id == shipment.MemberId);
                 member?.Shipments.Remove(shipment);
-                return await ApplicationDbContext.SaveChangesAsync();
+                return 1;
             }
             return 0;
         }
 
         public async Task<int> ConfirmShipment(int id)
         {
-            var shipment = ApplicationDbContext.Shipments.FirstOrDefault(s => s.Id == id);
+            var shipment = await _context.Shipments.FirstOrDefaultAsync(s => s.Id == id);
             if(shipment != null)
             {
                 shipment.IsConfirmed = true;
-                var member = ApplicationDbContext.Members.Include(m => m.MembershipType)
-                    .FirstOrDefault(m => m.Id == shipment.MemberId);
+                var member = await _context.Members.Include(m => m.MembershipType)
+                    .FirstOrDefaultAsync(m => m.Id == shipment.MemberId);
                 if(member.MembershipType.Id != 1)
                 {
                     if(member.BooksRemaining == 0)
@@ -113,7 +115,7 @@ namespace BookSmart.Services
                     }
                     member.BooksRemaining--;
                 }
-                return await ApplicationDbContext.SaveChangesAsync();
+                return 1;
             }
             return 0;
         }

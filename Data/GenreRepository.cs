@@ -6,12 +6,11 @@ namespace BookSmart.Data
 {
     public class GenreRepository : Repository<Genre>, IGenreRepository
     {
+        private readonly ApplicationDbContext _context;
         public GenreRepository(ApplicationDbContext context)
-            : base(context) { }
-
-        public ApplicationDbContext ApplicationDbContext
+            : base(context) 
         {
-            get { return Context as ApplicationDbContext; }
+            _context = context;
         }
     }
 }

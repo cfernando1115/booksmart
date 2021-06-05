@@ -15,6 +15,8 @@ namespace BookSmart.Interfaces
 
         IMembershipTypeRepository MembershipTypes { get; }
 
+        bool HasChanges();
+
         Task<int> CompleteAsync();
     }
 }
