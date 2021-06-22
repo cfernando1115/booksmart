@@ -15,9 +15,12 @@ namespace BookSmart.Controllers.Api
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public MemberApiController(IUnitOfWork unitOfWork)
+        private readonly IMemberService _memberService;
+
+        public MemberApiController(IUnitOfWork unitOfWork, IMemberService memberService)
         {
             _unitOfWork = unitOfWork;
+            _memberService = memberService;
         }
 
         [HttpPost]
@@ -28,8 +31,8 @@ namespace BookSmart.Controllers.Api
             RequestResponse<int> response = new RequestResponse<int>();
             try
             {
-                var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAsync(User.GetUsername());
-                var result = await _unitOfWork.MemberService.AddToBagAsync(member, bookId);
+                var member = await _unitOfWork.Members.GetMemberByUsernameWithBooksAsync(User.GetUsername());
+                var result = _memberService.AddToBag(member, bookId);
 
                 if (result == 2)
                 {
@@ -66,8 +69,8 @@ namespace BookSmart.Controllers.Api
             RequestResponse<int> response = new RequestResponse<int>();
             try
             {
-                var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
-                var result = await _unitOfWork.MemberService.RemoveFromBagAsync(member, bookId);
+                var member = await _memberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
+                var result = _memberService.RemoveFromBag(member, bookId);
                 if (result == 1)
                 {
                     response.Message = Utility.ResponseHelper.BookRemovedFromBag;

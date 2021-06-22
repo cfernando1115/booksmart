@@ -13,21 +13,20 @@ namespace BookSmart.Data
             _context = context;
         }
 
-        public IMemberService MemberService => new MemberService(_context);
+        public IMemberRepository Members => new MemberRepository(_context);
 
-        public IBookService BookService => new BookService(_context);
+        public IBookRepository Books => new BookRepository(_context);
+
+        public IShipmentRepository Shipments => new ShipmentRepository(_context);
 
         public IGenreRepository Genres => new GenreRepository(_context);
 
         public IMembershipTypeRepository MembershipTypes => new MembershipTypeRepository(_context);
 
-        public IShipmentService ShipmentService => new ShipmentService(_context);
-
         public bool HasChanges()
         {
             return _context.ChangeTracker.HasChanges();
         }
-
 
         public async Task<int> CompleteAsync()
         {

@@ -5,11 +5,12 @@ namespace BookSmart.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBookService BookService { get; }
+        IBookRepository Books { get; }
 
-        IShipmentService ShipmentService { get; }
+        IShipmentRepository Shipments { get; }
 
-        IMemberService MemberService { get; }
+
+        IMemberRepository Members { get; }
 
         IGenreRepository Genres { get; }
 

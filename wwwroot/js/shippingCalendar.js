@@ -1,7 +1,4 @@
 ﻿
-
-let routeURL = location.protocol + '//' + location.host;
-
 $(document).ready(function () {
     initializeCalendar();
 

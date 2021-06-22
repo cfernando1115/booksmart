@@ -18,10 +18,12 @@ namespace BookSmart.Controllers.Api
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly string _loginUserId;
         private readonly string _role;
+        private readonly IShipmentService _shipmentService;
 
-        public ShipmentApiController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public ShipmentApiController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IShipmentService shipmentService)
         {
             _unitOfWork = unitOfWork;
+            _shipmentService = shipmentService;
             _httpContextAccessor = httpContextAccessor;
 
             _loginUserId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -37,7 +39,7 @@ namespace BookSmart.Controllers.Api
 
             try
             {
-                requestResponse.Status = await _unitOfWork.ShipmentService.AddUpdateAsync(shipmentModel);
+                requestResponse.Status = await _shipmentService.AddUpdateAsync(shipmentModel);
 
                 if(requestResponse.Status == 1)
                 {
@@ -63,13 +65,13 @@ namespace BookSmart.Controllers.Api
 
         [HttpGet]
         [Route("GetShipmentDataByMember")]
-        public ActionResult GetShipmentDataByMember(int memberId)
+        public async Task<ActionResult> GetShipmentDataByMember(int memberId)
         {
             RequestResponse<List<ShipmentFormViewModel>> requestResponse = new RequestResponse<List<ShipmentFormViewModel>>();
 
             try
             {
-                requestResponse.Data = _unitOfWork.ShipmentService.ShipmentsByMemberId(memberId);
+                requestResponse.Data = await _shipmentService.ShipmentsByMemberId(memberId);
                 requestResponse.Status = Utility.ResponseHelper.SuccessCode;
             }
             catch(Exception ex)
@@ -82,13 +84,13 @@ namespace BookSmart.Controllers.Api
 
         [HttpGet]
         [Route("GetShipmentById/{id}")]
-        public ActionResult GetShipmentById(int id)
+        public async Task<ActionResult> GetShipmentById(int id)
         {
             RequestResponse<ShipmentFormViewModel> requestResponse = new RequestResponse<ShipmentFormViewModel>();
 
             try
             {
-                requestResponse.Data = _unitOfWork.ShipmentService.ShipmentById(id);
+                requestResponse.Data = await _shipmentService.ShipmentById(id);
                 requestResponse.Status = Utility.ResponseHelper.SuccessCode;
             }
             catch(Exception ex)
@@ -106,7 +108,7 @@ namespace BookSmart.Controllers.Api
             RequestResponse<int> requestResponse = new RequestResponse<int>();
             try
             {
-                requestResponse.Status = await _unitOfWork.ShipmentService.DeleteShipment(id);
+                requestResponse.Status = await _shipmentService.DeleteShipment(id);
                 requestResponse.Message = requestResponse.Status == 1
                     ? Utility.ResponseHelper.ShipmentDeleted
                     : Utility.ResponseHelper.ShipmentDeleteError;
@@ -131,7 +133,7 @@ namespace BookSmart.Controllers.Api
             RequestResponse<int> requestResponse = new RequestResponse<int>();
             try
             {
-                var result = await _unitOfWork.ShipmentService.ConfirmShipment(id);
+                var result = await _shipmentService.ConfirmShipment(id);
                 if(result > 0)
                 {
                     requestResponse.Status = result;

@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace BookSmart.Interfaces
 {
-    public interface IShipmentService : IShipmentRepository
+    public interface IShipmentService 
     {
         Task<int> AddUpdateAsync(ShipmentFormViewModel shipmentFormViewModel);
 
-        List<ShipmentFormViewModel> ShipmentsByMemberId(int id);
+        Task<List<ShipmentFormViewModel>> ShipmentsByMemberId(int id);
 
-        ShipmentFormViewModel ShipmentById(int id);
+        Task<ShipmentFormViewModel> ShipmentById(int id);
 
         Task<List<Shipment>> ShipmentsWithBooksByMemberId(int id);
 

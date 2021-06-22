@@ -19,11 +19,13 @@ namespace BookSmart.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _config;
+        private readonly IMemberService _memberService;
 
-        public MemberController(IUnitOfWork unitOfWork, IConfiguration config)
+        public MemberController(IUnitOfWork unitOfWork, IConfiguration config, IMemberService memberService)
         {
             _unitOfWork = unitOfWork;
             _config = config;
+            _memberService = memberService;
         }
 
         [Authorize(Policy = "RequireAdminRole")]
@@ -35,17 +37,17 @@ namespace BookSmart.Controllers
                 PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("MemberPagination:PageSize"))
             };
 
-            var members = await _unitOfWork.MemberService.GetMembersWithMembershipTypeAsync(memberParams);
+            var members = await _unitOfWork.Members.GetMembersWithMembershipTypeAsync(memberParams);
             return View(members);
         }
 
         [HttpGet("Bag")]
         public async Task<ActionResult<MemberBagViewModel>> Bag()
         {
-            var member = await _unitOfWork.MemberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
+            var member = await _memberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
             if(member != null)
             {
-                return View(_unitOfWork.MemberService.BuildMemberBag(member));
+                return View(_memberService.BuildMemberBag(member));
             }
             return RedirectToAction("Login", "Account");
         }
@@ -59,7 +61,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var member = await _unitOfWork.MemberService.GetMemberWithMembershipTypeAsync((int)id);
+            var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync((int)id);
 
             if (member == null)
             {
@@ -86,7 +88,7 @@ namespace BookSmart.Controllers
             {
                 Member updatedMember = viewModel.Member;
 
-                var member = await _unitOfWork.MemberService.GetMemberWithMembershipTypeAsync(updatedMember.Id);
+                var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync(updatedMember.Id);
 
                 member.Name = updatedMember.Name;
                 member.MembershipTypeId = updatedMember.MembershipTypeId;
@@ -109,7 +111,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var member = await _unitOfWork.MemberService.GetMemberWithMembershipTypeAsync((int)id);
+            var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync((int)id);
 
             if (member == null)
             {
@@ -124,14 +126,14 @@ namespace BookSmart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteMember(int? id)
         {
-            var member = _unitOfWork.MemberService.Get(id);
+            var member = _unitOfWork.Members.Get(id);
 
             if (member == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.MemberService.Remove(member);
+            _unitOfWork.Members.Remove(member);
 
             await _unitOfWork.CompleteAsync();
 

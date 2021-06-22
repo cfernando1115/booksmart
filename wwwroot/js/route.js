@@ -1,0 +1,1 @@
+﻿const routeURL = location.protocol + '//' + location.host;

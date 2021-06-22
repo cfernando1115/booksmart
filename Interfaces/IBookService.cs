@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookSmart.Interfaces
 {
-    public interface IBookService : IBookRepository
+    public interface IBookService
     {
         Task<IEnumerable<Book>> GetBooksAfterDate(DateTime dateAdded, int maxNumberOfBooks);
 

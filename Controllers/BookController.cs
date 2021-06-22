@@ -17,13 +17,15 @@ namespace BookSmart.Controllers
     [Route("Book")]
     public class BookController : Controller
     {
+        private readonly IBookService _bookService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _config;
 
-        public BookController(IUnitOfWork unitOfWork, IConfiguration config)
+        public BookController(IUnitOfWork unitOfWork, IConfiguration config, IBookService bookService)
         {
             _unitOfWork = unitOfWork;
             _config = config;
+            _bookService = bookService;
         }
 
         public async Task<ActionResult<BookFilterViewModel>> Index([FromQuery]int? pageNumber, int? genreId, int? pageSize)
@@ -37,7 +39,7 @@ namespace BookSmart.Controllers
 
             var bookFilterViewModel = new BookFilterViewModel
             {
-                Books = await _unitOfWork.BookService.GetBooksWithGenresAsync(bookParams),
+                Books = await _unitOfWork.Books.GetBooksWithGenresAsync(bookParams),
                 Genres = _unitOfWork.Genres.GetAll()
             };
             
@@ -47,13 +49,13 @@ namespace BookSmart.Controllers
         [HttpGet("Featured")]
         public async Task<ActionResult<IEnumerable<Book>>> Featured()
         {
-            var member = await _unitOfWork.MemberService.GetMemberByUsernameAsync(User.GetUsername());
+            var member = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
 
             var lastLogin = member.LastLogin ?? DateTime.Today;
 
             var numBooks = Utility.FeatureHelper.NumBooks;
 
-            var newBooks = await _unitOfWork.BookService.GetBooksAfterDate(lastLogin, numBooks) ?? await _unitOfWork.BookService.GetBooksBeforeDate(lastLogin, numBooks);
+            var newBooks = await _bookService.GetBooksAfterDate(lastLogin, numBooks) ?? await _bookService.GetBooksBeforeDate(lastLogin, numBooks);
 
             var memberBooksModel = new MemberBooksViewModel
             {
@@ -93,7 +95,7 @@ namespace BookSmart.Controllers
                     Description = model.Book.Description
                 };
 
-                _unitOfWork.BookService.Add(book);
+                _unitOfWork.Books.Add(book);
 
                 await _unitOfWork.CompleteAsync();
             }
@@ -110,7 +112,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var book = await _unitOfWork.BookService.GetBookWithGenreAsync(id);
+            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
 
             if (book == null)
             {
@@ -125,14 +127,14 @@ namespace BookSmart.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteBook(int? id)
         {
-            var book = _unitOfWork.BookService.Get(id);
+            var book = _unitOfWork.Books.Get(id);
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.BookService.Remove(book);
+            _unitOfWork.Books.Remove(book);
 
             await _unitOfWork.CompleteAsync();
 
@@ -148,7 +150,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var book = await _unitOfWork.BookService.GetBookWithGenreAsync(id);
+            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
 
             if (book == null)
             {
@@ -175,7 +177,7 @@ namespace BookSmart.Controllers
             {
                 Book updatedBook = viewModel.Book;
 
-                var book = _unitOfWork.BookService.Get(updatedBook.Id);
+                var book = _unitOfWork.Books.Get(updatedBook.Id);
 
                 book.Name = updatedBook.Name;
                 book.Author = updatedBook.Author;
@@ -199,7 +201,7 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var book = await _unitOfWork.BookService.GetBookWithGenreAsync(id);
+            var book = await _unitOfWork.Books.GetBookWithGenreAsync(id);
 
             if (book == null)
             {

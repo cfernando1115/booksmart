@@ -1,5 +1,4 @@
-﻿let routeURL = location.protocol + '//' + location.host;
-
+﻿
 function removeBookFromBag(bookId) {
     try {
         $.ajax({

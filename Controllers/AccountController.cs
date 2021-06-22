@@ -133,7 +133,7 @@ namespace BookSmart.Controllers
         {
             if (User.IsInRole(Utility.RoleHelper.Member))
             {
-                var member = await _unitOfWork.MemberService.GetMemberByUsernameAsync(User.GetUsername());
+                var member = await _unitOfWork.Members.GetMemberByUsernameAsync(User.GetUsername());
                 member.LastLogin = DateTime.Today;
 
                 await _unitOfWork.CompleteAsync();

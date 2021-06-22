@@ -18,6 +18,12 @@ namespace BookSmart.Extensions
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<IBookService, BookService>();
+
+            services.AddScoped<IMemberService, MemberService>();
+
+            services.AddScoped<IShipmentService, ShipmentService>();
+
             return services;
         }
     }

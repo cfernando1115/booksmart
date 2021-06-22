@@ -4,6 +4,7 @@ using BookSmart.Utility;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookSmart.Data
@@ -55,5 +56,21 @@ namespace BookSmart.Data
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 
+        public IQueryable<Member> GetMembers()
+        {
+            return _context.Members.AsQueryable();
+        }
+
+        public IQueryable<Member> GetMember(int id)
+        {
+            return _context.Members.Where(m => m.Id == id).AsQueryable();
+        }
+
+        public async Task<Member> GetMemberWithShipmentsAsync(int id)
+        {
+            return await _context.Members
+                .Include(m => m.Shipments)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
     }
 }

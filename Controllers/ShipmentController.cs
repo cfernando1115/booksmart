@@ -12,9 +12,12 @@ namespace BookSmart.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public ShipmentController(IUnitOfWork unitOfWork)
+        private readonly IMemberService _memberService;
+
+        public ShipmentController(IUnitOfWork unitOfWork, IMemberService memberService)
         {
             _unitOfWork = unitOfWork;
+            _memberService = memberService;
         }
 
         [HttpGet("Calendar/{id?}")]
@@ -25,13 +28,8 @@ namespace BookSmart.Controllers
                 return NotFound();
             }
 
-            var member = await _unitOfWork.MemberService.GetMemberByIdWithBooksAsync((int)id);
+            var viewModel = await _memberService.GetMemberShipmentsModel((int)id);
 
-            ShipmentViewModel viewModel = new ShipmentViewModel
-            {
-                Member = member,
-                Books = member.Books
-            };
             return View(viewModel);
         }
     }

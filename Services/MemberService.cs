@@ -3,30 +3,50 @@ using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookSmart.Services
 {
-    public class MemberService : MemberRepository, IMemberService
+    public class MemberService : IMemberService
     {
 
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public MemberService(ApplicationDbContext context)
-            : base(context) 
+        public MemberService(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Member> GetMemberByUsernameWithBooksAndShipmentsAsync(string username)
         {
-            return await _context.Members
+            var members = _unitOfWork.Members.GetMembers();
+
+            return await members
                 .Include(m => m.Shipments)
                 .Include(m => m.MembershipType)
                 .Include(m => m.Books)
                 .ThenInclude(b => b.Genre)
                 .SingleOrDefaultAsync(u => u.UserName == username);
+        }
+
+        public async Task<ShipmentViewModel> GetMemberShipmentsModel(int id)
+        {
+            var memberShipments = await _unitOfWork.Shipments.GetShipments()
+                .Where(s => s.MemberId == id && (s.ShipDate != null && s.ShipDate < DateTime.Now) || s.IsConfirmed)
+                .Select(b => b.BookId)
+                .ToListAsync();
+
+            var member = await _unitOfWork.Members.GetMember(id)
+                .Include(m => m.Books.Where(b => !memberShipments.Contains(b.Id)))
+                .FirstOrDefaultAsync();
+
+            return new ShipmentViewModel
+            {
+                Member = member,
+                Books = member.Books
+            };
         }
 
         public MemberBagViewModel BuildMemberBag(Member member)
@@ -47,9 +67,9 @@ namespace BookSmart.Services
             };
         }
 
-        public async Task<int> AddToBagAsync(Member member, int bookId)
+        public int AddToBag(Member member, int bookId)
         {
-            var bookToAdd = await _context.Books.FindAsync(bookId);
+            var bookToAdd = _unitOfWork.Books.Get(bookId);
 
             if (member.Books.Contains(bookToAdd))
             {
@@ -61,9 +81,9 @@ namespace BookSmart.Services
             return 1;
         }
 
-        public async Task<int> RemoveFromBagAsync(Member member, int bookId)
+        public int RemoveFromBag(Member member, int bookId)
         {
-            var bookToRemove = await _context.Books.FindAsync(bookId);
+            var bookToRemove = _unitOfWork.Books.Get(bookId);
 
             if (member.Books.Contains(bookToRemove))
             {
@@ -73,7 +93,7 @@ namespace BookSmart.Services
                 if (shipment != null)
                 {
                     member.Shipments.Remove(shipment);
-                    _context.Shipments.Remove(shipment);
+                    _unitOfWork.Shipments.Remove(shipment);
                 }
 
                 return 1;
