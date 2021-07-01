@@ -30,6 +30,11 @@ namespace BookSmart.Controllers
 
             var viewModel = await _memberService.GetMemberShipmentsModel((int)id);
 
+            if (_unitOfWork.HasChanges())
+            {
+                await _unitOfWork.CompleteAsync();
+            }
+
             return View(viewModel);
         }
     }

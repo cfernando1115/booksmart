@@ -43,8 +43,16 @@ namespace BookSmart.Data
 
         public async Task<PagedList<Member>> GetMembersWithMembershipTypeAsync(MemberParams memberParams)
         {
-            var query = _context.Members
+            IQueryable<Member> query = _context.Members
                 .Include(m => m.MembershipType);
+
+            query = memberParams.Filter switch
+            {
+                "membershiptype" => query.OrderBy(m => m.MembershipType.Id),
+                "lastlogin" => query.OrderByDescending(m => m.LastLogin),
+                "booksremaining" => query.OrderByDescending(m => m.BooksRemaining),
+                _ => query.OrderBy(m => m.Name)
+            };
 
             return await PagedList<Member>.CreateAsync(query, memberParams.PageNumber, memberParams.PageSize);
         }

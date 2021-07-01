@@ -29,16 +29,22 @@ namespace BookSmart.Controllers
         }
 
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<ActionResult<IEnumerable<Member>>> Index(int? pageNumber, int? pageSize)
+        public async Task<ActionResult<IEnumerable<Member>>> Index(int? pageNumber, int? pageSize, string memberFilter)
         {
             var memberParams = new MemberParams
             {
                 PageNumber = pageNumber ?? 1,
-                PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("MemberPagination:PageSize"))
+                PageSize = pageSize ?? Convert.ToInt32(_config.GetValue<string>("MemberPagination:PageSize")),
+                Filter = memberFilter ?? "none"
             };
 
-            var members = await _unitOfWork.Members.GetMembersWithMembershipTypeAsync(memberParams);
-            return View(members);
+            var memberFilterViewModel = new MemberFilterViewModel
+            {
+                Members = await _unitOfWork.Members.GetMembersWithMembershipTypeAsync(memberParams),
+                MemberFilters = Utility.MemberFilters.GetMemberFilters()
+            };
+
+            return View(memberFilterViewModel);
         }
 
         [HttpGet("Bag")]

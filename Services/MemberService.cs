@@ -1,4 +1,5 @@
 ﻿using BookSmart.Data;
+using BookSmart.Extensions;
 using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
@@ -35,18 +36,17 @@ namespace BookSmart.Services
         {
             var memberShipments = await _unitOfWork.Shipments.GetShipments()
                 .Where(s => s.MemberId == id && (s.ShipDate != null && s.ShipDate < DateTime.Now) || s.IsConfirmed)
+                .ResetUnconfirmedPastShipments(_unitOfWork)
                 .Select(b => b.BookId)
                 .ToListAsync();
 
-            var member = await _unitOfWork.Members.GetMember(id)
-                .Include(m => m.Books.Where(b => !memberShipments.Contains(b.Id)))
-                .FirstOrDefaultAsync();
-
-            return new ShipmentViewModel
-            {
-                Member = member,
-                Books = member.Books
-            };
+            return await _unitOfWork.Members.GetMember(id)
+                .Include(m => m.Books)
+                .Select(m => new ShipmentViewModel
+                {
+                    Member = m,
+                    Books = m.Books.Where(b => !memberShipments.Contains(b.Id))
+                }).FirstOrDefaultAsync();
         }
 
         public MemberBagViewModel BuildMemberBag(Member member)

@@ -1,18 +1,27 @@
-﻿@model BookSmart.Utility.PagedList<BookSmart.Models.Member>
+﻿@model BookSmart.ViewModels.MemberFilterViewModel
 
 <div class="container p-3">
-    <div class="col-3">
-        <a asp-controller="Account" asp-action="Register" class="btn-secondary form-control text-center">Admin registration</a>
+    <div class="row">
+        <div class="mb-3 col-md-12 btn-group">
+            <a asp-controller="Account" asp-action="Register" class="btn-secondary form-control text-center col-md-2">Add Admin</a>
+            <a class="btn btn-primary col-md-2 offset-md-1 ml-3" asp-controller="Account" asp-action="Register">Add Member</a>
+        </div>
     </div>
     <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">Members</h2>
+        <div class="mb-3 col-md-12">
+            <h2 class="text-primary d-inline pr-3">Members</h2>
+            <select class="text-primary col-4 offset-md-1 d-inline form-control mr-2" id="memberFilter"
+                    asp-items="@Model.MemberFilters">
+                <option class="genreOption" selected value="none">--Filter--</option>
+            </select>
+            <a class="btn btn-primary mb-1 text-white cursor-pointer" id="applyFilter" asp-controller="Member" asp-action="Index">Apply Filter</a>
+            <a class="btn btn-outline-primary mb-1 cursor-pointer" id="filterReset" asp-controller="Member" asp-action="Index">Reset Filter</a>
         </div>
         <div class="col-6 text-right">
-            <a class="btn btn-primary" asp-controller="Account" asp-action="Register">Add Member</a>
+
         </div>
     </div>
-    @if (Model.Count() > 0)
+    @if (Model.Members.Count() > 0)
     {
         <table class="table table-bordered table-striped" style="width:100%;">
             <thead>
@@ -26,9 +35,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var member in Model)
+                @foreach (var member in Model.Members)
                 {
-                    <tr>
+                    <tr id="@member.Name" class="member">
                         <td width="20%">@member.Name</td>
                         <td width="20%">@member.MembershipType.Name</td>
                         <td width="10%">@member.BooksRemaining</td>
@@ -48,7 +57,7 @@
         </table>
 
         <nav aria-label="Page navigation">
-            <p><small>Page <span class="currentPage">@Model.CurrentPage</span> of <span class="totalPages">@Model.TotalPages</span> pages</small></p>
+            <p><small>Page <span class="currentPage">@Model.Members.CurrentPage</span> of <span class="totalPages">@Model.Members.TotalPages</span> pages</small></p>
             <ul class="pagination justify-content-center">
                 <li class="page-item" id="first">
                     <a class="page-link" asp-controller="Member" asp-action="Index" asp-route-pageNumber="1" aria-label="Previous">
@@ -56,12 +65,12 @@
                         <span class="sr-only">Previous</span>
                     </a>
                 </li>
-                @for (var i = 0; i < @Model.TotalPages; i++)
+                @for (var i = 0; i < @Model.Members.TotalPages; i++)
                 {
-                    <li class="page-item pageBtn" data-page="@(i+1)"><a class="page-link" asp-controller="Member" asp-action="Index" asp-route-pageNumber="@(i + 1)">@(i+1)</a></li>
+                    <li class="page-item pageBtn" data-page="@(i+1)"><a class="page-link" asp-controller="Member" asp-action="Index">@(i+1)</a></li>
                 }
                 <li class="page-item" id="last">
-                    <a class="page-link" asp-controller="Member" asp-action="Index" asp-route-pageNumber="@Model.TotalPages" aria-label="Next">
+                    <a class="page-link" asp-controller="Member" asp-action="Index" asp-route-pageNumber="@Model.Members.TotalPages" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>
                         <span class="sr-only">Next</span>
                     </a>
@@ -77,5 +86,6 @@
 
 @section Scripts {
     <script src="~/js/pagination.js"></script>
+    <script src="~/js/memberFilter.js"></script>
 }
 
