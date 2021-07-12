@@ -443,4 +443,6 @@ $RECYCLE.BIN/
 
 Environment/*
 
+appsettings.Development.json
+
 

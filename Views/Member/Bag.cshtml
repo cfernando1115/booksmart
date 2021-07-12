@@ -20,16 +20,19 @@
                 <div class="row mt-3">
                     @foreach (var shipBook in Model.UnconfirmedShipments)
                     {
-                        <div class="text-center col-sm-4 mt-5" id="@shipBook.Book.Id">
-                            <img src="~/img/logo-small.svg" alt="@shipBook.Book.Name" />
-                            <h5 class="mt-3">@shipBook.Book.Name</h5>
-                            <p class="mb-1">@shipBook.Book.Author</p>
-                            <p class="mb-1">@shipBook.Book.Genre.Name</p>
-                            <p class="mb-0">Regular Price: <strike>$@shipBook.Book.Price</strike></p>
-                            <p class="mb-1"><small><i> before membership discount</i></small></p>
-                            <h5><i>Your Price: $@Math.Round((Model.DiscountRate * shipBook.Book.Price), 2)</i></h5>
+                    <div class="text-center col-md-6 mt-5" id="@shipBook.Book.Id">
+                        <img src="~/img/logo-small.svg" alt="@shipBook.Book.Name" />
+                        <h5 class="mt-3">@shipBook.Book.Name</h5>
+                        <p class="mb-1">@shipBook.Book.Author</p>
+                        <p class="mb-1">@shipBook.Book.Genre.Name</p>
+                        <p class="mb-0">Regular Price: <strike>$@shipBook.Book.Price</strike></p>
+                        <p class="mb-1"><small><i> before membership discount</i></small></p>
+                        <h5><i>Your Price: $@Math.Round((Model.DiscountRate * shipBook.Book.Price), 2)</i></h5>
+                        <div class="btn-group">
                             <button type="button" class="btn btn-primary mx-1" id="removeFromBagBtn" onclick="removeBookFromBag(@shipBook.Book.Id);">Remove From Bag</button>
+                            <button type="button" class="btn btn-success mx-1" id="confirmShipmentBtn" onclick="confirmShipment(@shipBook.ShipId);">Confirm</button>
                         </div>
+                    </div>
                     }
                 </div>
             }
@@ -94,4 +97,5 @@
 
 @section Scripts{
     <script src="~/js/removeFromBag.js"></script>
+    <script src="~/js/confirmFromBag.js"></script>
 }

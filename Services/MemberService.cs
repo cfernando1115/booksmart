@@ -35,7 +35,7 @@ namespace BookSmart.Services
         public async Task<ShipmentViewModel> GetMemberShipmentsModel(int id)
         {
             var memberShipments = await _unitOfWork.Shipments.GetShipments()
-                .Where(s => s.MemberId == id && (s.ShipDate != null && s.ShipDate < DateTime.Now) || s.IsConfirmed)
+                .Where(s => s.MemberId == id && ((s.ShipDate != null && s.ShipDate < DateTime.Now) || s.IsConfirmed))
                 .ResetUnconfirmedPastShipments(_unitOfWork)
                 .Select(b => b.BookId)
                 .ToListAsync();
@@ -55,10 +55,10 @@ namespace BookSmart.Services
             {
                 Member = member,
                 ConfirmedShipments = member.Shipments?.Where(s => s.IsConfirmed == true)
-                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd") })
+                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd"), ShipId = b.Id })
                     .ToList(),
                 UnconfirmedShipments = member.Shipments?.Where(s => s.IsConfirmed == false && s.ShipDate != null)
-                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd") })
+                    .Select(b => new ShipmentBookViewModel { Book = b.Book, ShipDate = b.ShipDate.ToString("yyyy-MM-dd"), ShipId = b.Id })
                     .ToList(),
                 UnscheduledBooks = member.Books?.Where(b => member.Shipments
                     .SingleOrDefault(s => s.BookId == b.Id) == null)

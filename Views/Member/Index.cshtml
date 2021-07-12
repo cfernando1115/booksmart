@@ -41,7 +41,7 @@
                         <td width="20%">@member.Name</td>
                         <td width="20%">@member.MembershipType.Name</td>
                         <td width="10%">@member.BooksRemaining</td>
-                        <td width="20%">@member.LastLogin</td>
+                        <td width="20%">@(((DateTime)member.LastLogin).ToShortDateString())</td>
                         <td width="20%">
                             <div class="w-100 btn-group" role="group">
                                 <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Update">Update</a>
