@@ -9,7 +9,7 @@ function addBookToBag(bookId) {
                     $.notify(response.message, 'info');
                 }
                 else {
-                    $.notify(response.message, 'success');
+                    sessionStorage.setItem('addToBagMessage', response.message);
                     location.href = `${routeURL}/Member/Bag`;
                 }
             },

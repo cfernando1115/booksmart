@@ -153,8 +153,8 @@ function deleteShipment() {
 function confirmShipment(idInput = null) {
 
     const id = idInput === null
-        ? +($('#id').val())
-        : +idInput;
+        ? ($('#id').val())
+        : idInput;
 
     $.ajax({
         url: `${routeURL}/api/Shipment/ConfirmShipment/${id}`,
