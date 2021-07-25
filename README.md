@@ -3,7 +3,7 @@
 *An online book retailer offering discounted pricing based on annual membership type*
 
 ***
-### This project is currently in progress
+### Version 1.0.0 of this project can be viewed [here](https://booksmartapp.azurewebsites.net/)
 ***
 
 ### How It Works
