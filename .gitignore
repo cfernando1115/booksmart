@@ -445,4 +445,9 @@ Environment/*
 
 appsettings.Development.json
 
+Properties/ServiceDependencies/*
+Properties/serviceDependencies.BookSmartApp - Web Deploy.json
+Properties/serviceDependencies.json
+
+
 
