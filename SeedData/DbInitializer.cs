@@ -18,7 +18,7 @@ namespace BookSmart.SeedData
 
         private readonly IConfiguration _config;
 
-        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<AppRole> roleManager, IConfiguration config )
+        public DbInitializer(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<AppRole> roleManager, IConfiguration config)
         {
             _context = context;
             _userManager = userManager;
@@ -37,7 +37,7 @@ namespace BookSmart.SeedData
             }
             catch (Exception) { }
 
-            if(_context.Roles.Any(r => r.Name == Utility.RoleHelper.Admin))
+            if (_context.Roles.Any(r => r.Name == Utility.RoleHelper.Admin))
             {
                 return;
             }
@@ -228,7 +228,7 @@ namespace BookSmart.SeedData
                     GenreId = 13
                 }
             );
-                _context.SaveChangesAsync().GetAwaiter().GetResult();
+            _context.SaveChangesAsync().GetAwaiter().GetResult();
         }
     }
 }

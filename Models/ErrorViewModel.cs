@@ -1,5 +1,3 @@
-using System;
-
 namespace BookSmart.Models
 {
     public class ErrorViewModel

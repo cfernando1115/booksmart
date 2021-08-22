@@ -10,7 +10,7 @@ namespace BookSmart.Data
     {
         private readonly ApplicationDbContext _context;
         public ShipmentRepository(ApplicationDbContext context)
-            : base(context) 
+            : base(context)
         {
             _context = context;
         }
@@ -19,7 +19,7 @@ namespace BookSmart.Data
         {
             return _context.Shipments.AsQueryable();
         }
-        
+
         public IQueryable<Shipment> GetShipment(int id)
         {
             return _context.Shipments.Where(s => s.Id == id).AsQueryable();

@@ -8,7 +8,7 @@ namespace BookSmart.Data
     {
         private readonly ApplicationDbContext _context;
         public GenreRepository(ApplicationDbContext context)
-            : base(context) 
+            : base(context)
         {
             _context = context;
         }

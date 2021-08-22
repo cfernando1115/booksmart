@@ -1,5 +1,4 @@
-﻿using BookSmart.Interfaces;
-using BookSmart.Models;
+﻿using BookSmart.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

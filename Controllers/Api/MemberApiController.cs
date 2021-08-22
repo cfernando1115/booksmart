@@ -1,11 +1,10 @@
-﻿using BookSmart.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using BookSmart.Extensions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using BookSmart.Extensions;
+using BookSmart.Interfaces;
 using BookSmart.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookSmart.Controllers.Api
 {
@@ -53,7 +52,7 @@ namespace BookSmart.Controllers.Api
 
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Message = ex.Message;
                 response.Status = Utility.ResponseHelper.FailureCode;

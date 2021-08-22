@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookSmart.Extensions;
+using BookSmart.Interfaces;
+using BookSmart.Models;
+using BookSmart.Utility;
+using BookSmart.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BookSmart.Models;
-using BookSmart.ViewModels;
-using BookSmart.Interfaces;
-using BookSmart.Extensions;
-using System;
-using Microsoft.AspNetCore.Authorization;
-using BookSmart.Utility;
-using Microsoft.Extensions.Configuration;
 
 namespace BookSmart.Controllers
 {
@@ -28,7 +28,7 @@ namespace BookSmart.Controllers
             _bookService = bookService;
         }
 
-        public async Task<ActionResult<BookFilterViewModel>> Index([FromQuery]int? pageNumber, int? genreId, int? pageSize)
+        public async Task<ActionResult<BookFilterViewModel>> Index([FromQuery] int? pageNumber, int? genreId, int? pageSize)
         {
             var bookParams = new BookParams
             {
@@ -42,8 +42,8 @@ namespace BookSmart.Controllers
                 Books = await _unitOfWork.Books.GetBooksWithGenresAsync(bookParams),
                 Genres = _unitOfWork.Genres.GetAll()
             };
-            
-        return View(bookFilterViewModel);
+
+            return View(bookFilterViewModel);
         }
 
         [HttpGet("Featured")]

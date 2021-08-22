@@ -10,7 +10,7 @@
     <div class="row pt-4">
         <div class="mb-3 col-md-12">
             <h2 class="text-primary d-inline pr-3">Members</h2>
-            <select class="text-primary col-4 offset-md-1 d-inline form-control mr-2" id="memberFilter"
+            <select class="text-primary col-sm-6 offset-md-1 d-inline form-control mr-2 mb-2" id="memberFilter"
                     asp-items="@Model.MemberFilters">
                 <option class="genreOption" selected value="none">--Filter--</option>
             </select>
@@ -23,38 +23,40 @@
     </div>
     @if (Model.Members.Count() > 0)
     {
-        <table class="table table-bordered table-striped" style="width:100%;">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Membership Type</th>
-                    <th>Books Remaining</th>
-                    <th>Last Login</th>
-                    <th>Update/Delete</th>
-                    <th>Shipments</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var member in Model.Members)
-                {
-                    <tr id="@member.Name" class="member">
-                        <td width="20%">@member.Name</td>
-                        <td width="20%">@member.MembershipType.Name</td>
-                        <td width="10%">@member.BooksRemaining</td>
-                        <td width="20%">@(((DateTime)member.LastLogin).ToShortDateString())</td>
-                        <td width="20%">
-                            <div class="w-100 btn-group" role="group">
-                                <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Update">Update</a>
-                                <a class="btn btn-danger mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Delete">Delete</a>
-                            </div>
-                        </td>
-                        <td width="10%">
-                            <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Shipment" asp-action="Calendar">Shipments</a>
-                        </td>
+        <div class="overflow-auto">
+            <table class="table table-bordered table-striped" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Membership Type</th>
+                        <th>Books Remaining</th>
+                        <th>Last Login</th>
+                        <th>Update/Delete</th>
+                        <th>Shipments</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var member in Model.Members)
+                    {
+                        <tr id="@member.Name" class="member">
+                            <td width="20%">@member.Name</td>
+                            <td width="20%">@member.MembershipType.Name</td>
+                            <td width="10%">@member.BooksRemaining</td>
+                            <td width="20%">@(((DateTime)member.LastLogin).ToShortDateString())</td>
+                            <td width="20%">
+                                <div class="w-100 btn-group" role="group">
+                                    <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Update">Update</a>
+                                    <a class="btn btn-danger mx-1" asp-route-id="@member.Id" asp-controller="Member" asp-action="Delete">Delete</a>
+                                </div>
+                            </td>
+                            <td width="10%">
+                                <a class="btn btn-primary mx-1" asp-route-id="@member.Id" asp-controller="Shipment" asp-action="Calendar">Shipments</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
         <nav aria-label="Page navigation">
             <p><small>Page <span class="currentPage">@Model.Members.CurrentPage</span> of <span class="totalPages">@Model.Members.TotalPages</span> pages</small></p>

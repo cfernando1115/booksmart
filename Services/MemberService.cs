@@ -1,5 +1,4 @@
-﻿using BookSmart.Data;
-using BookSmart.Extensions;
+﻿using BookSmart.Extensions;
 using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;

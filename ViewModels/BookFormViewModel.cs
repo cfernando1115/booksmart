@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BookSmart.Models;
+﻿using BookSmart.Models;
+using System.Collections.Generic;
 
 namespace BookSmart.ViewModels
 {

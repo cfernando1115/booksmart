@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using BookSmart.Interfaces;
 using BookSmart.Models;
-using BookSmart.Interfaces;
+using BookSmart.Utility;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using System.Linq;
-using BookSmart.Utility;
+using System.Threading.Tasks;
 
 namespace BookSmart.Data
 {
@@ -14,18 +13,18 @@ namespace BookSmart.Data
         private readonly ApplicationDbContext _context;
 
         public BookRepository(ApplicationDbContext context)
-            : base(context) 
+            : base(context)
         {
             _context = context;
         }
 
 
-        public async Task<PagedList<Book>> GetBooksWithGenresAsync(BookParams bookParams) 
+        public async Task<PagedList<Book>> GetBooksWithGenresAsync(BookParams bookParams)
         {
             IQueryable<Book> query = _context.Books
                 .Include(b => b.Genre);
-            
-            if(bookParams.GenreId != 0)
+
+            if (bookParams.GenreId != 0)
             {
                 query = query.Where(b => b.GenreId == bookParams.GenreId);
             }

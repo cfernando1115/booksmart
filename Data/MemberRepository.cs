@@ -3,7 +3,6 @@ using BookSmart.Models;
 using BookSmart.Utility;
 using Microsoft.EntityFrameworkCore;
 using Repository;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace BookSmart.Data
         private readonly ApplicationDbContext _context;
 
         public MemberRepository(ApplicationDbContext context)
-            : base(context) 
+            : base(context)
         {
             _context = context;
         }

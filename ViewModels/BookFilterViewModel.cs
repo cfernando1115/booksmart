@@ -1,9 +1,6 @@
 ﻿using BookSmart.Models;
 using BookSmart.Utility;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BookSmart.ViewModels
 {

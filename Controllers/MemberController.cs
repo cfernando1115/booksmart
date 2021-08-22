@@ -1,15 +1,15 @@
-﻿using BookSmart.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using BookSmart.Extensions;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BookSmart.Extensions;
+using BookSmart.Interfaces;
 using BookSmart.Models;
+using BookSmart.Utility;
 using BookSmart.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using BookSmart.Utility;
-using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookSmart.Controllers
 {
@@ -51,7 +51,7 @@ namespace BookSmart.Controllers
         public async Task<ActionResult<MemberBagViewModel>> Bag()
         {
             var member = await _memberService.GetMemberByUsernameWithBooksAndShipmentsAsync(User.GetUsername());
-            if(member != null)
+            if (member != null)
             {
                 return View(_memberService.BuildMemberBag(member));
             }

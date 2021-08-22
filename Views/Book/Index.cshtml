@@ -9,9 +9,9 @@
         </div>
     }
     <div class="row pt-4">
-        <div class="mb-3 col-md-12 pl-0">
-            <h2 class="text-primary d-inline col-1">Books</h2>
-            <select class="text-primary col-4 offset-md-1 d-inline form-control mr-2" id="genreId"
+        <div class="mb-3 col-md-12">
+            <h2 class="text-primary d-inline pr-3">Books</h2>
+            <select class="text-primary col-sm-6 offset-md-1 d-inline form-control mr-2 mb-2" id="genreId"
                     asp-items="@(new SelectList(Model.Genres, "Id", "Name"))">
                 <option class="genreOption" selected value=" ">--Filter by Genre--</option>
             </select>
@@ -21,53 +21,55 @@
     </div>
     @if (Model.Books.Count() > 0)
     {
-        <table class="table table-bordered table-striped" style="width:100%;">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Author</th>
-                    <th>Genre</th>
-                    <th>Price</th>
-                    @if (User.IsInRole(BookSmart.Utility.RoleHelper.Admin))
-                    {
-                        <th>Update/Delete</th>
-                    }
-                    else
-                    {
-                        <th>Add To Bag/Book Details</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var book in Model.Books)
-                {
+        <div class="overflow-auto">
+            <table class="table table-bordered table-striped" style="width:100%;">
+                <thead>
                     <tr>
-                        <td width="15%">@book.Name</td>
-                        <td width="15%">@book.Author</td>
-                        <td width="15%">@book.Genre.Name</td>
-                        <td width="15%">@book.Price</td>
+                        <th>Name</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                        <th>Price</th>
                         @if (User.IsInRole(BookSmart.Utility.RoleHelper.Admin))
                         {
-                            <td width="30%">
-                                <div class="w-100 btn-group" role="group">
-                                    <a class="btn btn-primary mx-1" asp-route-id="@book.Id" asp-controller="Book" asp-action="Update">Update</a>
-                                    <a class="btn btn-danger mx-1" asp-route-id="@book.Id" asp-controller="Book" asp-action="Delete">Delete</a>
-                                </div>
-                            </td>
+                            <th>Update/Delete</th>
                         }
                         else
                         {
-                            <td width="30%">
-                                <div class="w-100 btn-group" role="group">
-                                    <a class="btn btn-primary mx-1 text-white cursor-pointer" id="addToBagBtn" onclick="addBookToBag(@book.Id)">Add To Bag</a>
-                                    <a class="btn btn-danger mx-1" asp-route-id="@book.Id" asp-controller="Book" asp-action="Detail">Detail</a>
-                                </div>
-                            </td>
+                            <th>Add To Bag/Book Details</th>
                         }
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var book in Model.Books)
+                    {
+                        <tr>
+                            <td width="15%">@book.Name</td>
+                            <td width="15%">@book.Author</td>
+                            <td width="15%">@book.Genre.Name</td>
+                            <td class="bookPrice" width="15%">@book.Price</td>
+                            @if (User.IsInRole(BookSmart.Utility.RoleHelper.Admin))
+                            {
+                                <td width="30%">
+                                    <div class="w-100 btn-group" role="group">
+                                        <a class="btn btn-primary mx-1" asp-route-id="@book.Id" asp-controller="Book" asp-action="Update">Update</a>
+                                        <a class="btn btn-danger mx-1" asp-route-id="@book.Id" asp-controller="Book" asp-action="Delete">Delete</a>
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                <td width="30%">
+                                    <div class="w-100 btn-group" role="group">
+                                        <a class="btn btn-primary mx-1 text-white cursor-pointer" id="addToBagBtn" onclick="addBookToBag(@book.Id)">Add To Bag</a>
+                                        <a class="btn btn-danger mx-1" asp-route-id="@book.Id" asp-controller="Book" asp-action="Detail">Detail</a>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
         <nav aria-label="Page navigation">
             <p><small>Page <span class="currentPage">@Model.Books.CurrentPage</span> of <span class="totalPages">@Model.Books.TotalPages</span> pages</small></p>
@@ -102,4 +104,5 @@
     <script src="~/js/addToBag.js"></script>
     <script src="~/js/pagination.js"></script>
     <script src="~/js/bookFilter.js"></script>
+    <script src="~/js/priceFormatter.js"></script>
 }

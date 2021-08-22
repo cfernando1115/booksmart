@@ -1,9 +1,8 @@
-﻿using Repository;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using BookSmart.Models;
-using System.Linq;
+﻿using BookSmart.Models;
 using BookSmart.Utility;
+using Repository;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookSmart.Interfaces
 {

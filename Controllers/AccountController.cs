@@ -1,12 +1,12 @@
-﻿using BookSmart.Interfaces;
+﻿using BookSmart.Extensions;
+using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
-using BookSmart.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
 
 namespace BookSmart.Controllers
 {
@@ -76,7 +76,7 @@ namespace BookSmart.Controllers
             if (ModelState.IsValid)
             {
                 ApplicationUser user;
-                if(registerModel.RoleName == Utility.RoleHelper.Member)
+                if (registerModel.RoleName == Utility.RoleHelper.Member)
                 {
                     var membershipType = _unitOfWork.MembershipTypes.Get(registerModel.MembershipTypeId);
                     user = new Member
@@ -118,7 +118,7 @@ namespace BookSmart.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                foreach(var error in result.Errors)
+                foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError("", error.Description);
                 }

@@ -1,14 +1,13 @@
+using BookSmart.Data;
+using BookSmart.Extensions;
+using BookSmart.Models;
+using BookSmart.SeedData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using BookSmart.Extensions;
-using Microsoft.AspNetCore.Identity;
-using BookSmart.Data;
-using BookSmart.Models;
-using BookSmart.Services;
-using BookSmart.SeedData;
 
 namespace BookSmart
 {

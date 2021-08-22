@@ -1,4 +1,4 @@
-﻿using BookSmart.Data;
+﻿using BookSmart.Dtos;
 using BookSmart.Interfaces;
 using BookSmart.Models;
 using BookSmart.ViewModels;
@@ -19,18 +19,18 @@ namespace BookSmart.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<int> AddUpdateAsync(ShipmentFormViewModel shipmentFormViewModel)
+        public async Task<int> AddUpdateAsync(ShipmentFormDto shipmentFormDto)
         {
-            var shipDate = DateTime.Parse(shipmentFormViewModel.ShipDate);
+            var shipDate = DateTime.Parse(shipmentFormDto.ShipDate);
 
-            if (shipmentFormViewModel != null && shipmentFormViewModel.Id > 0)
+            if (shipmentFormDto != null && shipmentFormDto.Id > 0)
             {
-                var shipment = await _unitOfWork.Shipments.GetShipmentAsync((int)(shipmentFormViewModel.Id));
+                var shipment = await _unitOfWork.Shipments.GetShipmentAsync((int)(shipmentFormDto.Id));
 
-                if(shipment != null)
+                if (shipment != null)
                 {
                     shipment.ShipDate = shipDate;
-                    shipment.IsConfirmed = shipmentFormViewModel.IsConfirmed;
+                    shipment.IsConfirmed = shipmentFormDto.IsConfirmed;
                     return 1;
                 }
             }
@@ -39,11 +39,11 @@ namespace BookSmart.Services
                 Shipment shipment = new Shipment
                 {
                     ShipDate = shipDate,
-                    BookId = JsonSerializer.Deserialize<int>(shipmentFormViewModel.BookId),
-                    MemberId = JsonSerializer.Deserialize<int>(shipmentFormViewModel.MemberId)
+                    BookId = JsonSerializer.Deserialize<int>(shipmentFormDto.BookId),
+                    MemberId = JsonSerializer.Deserialize<int>(shipmentFormDto.MemberId)
                 };
 
-                var member = await _unitOfWork.Members.GetMemberWithShipmentsAsync(Convert.ToInt32(shipmentFormViewModel.MemberId));
+                var member = await _unitOfWork.Members.GetMemberWithShipmentsAsync(Convert.ToInt32(shipmentFormDto.MemberId));
                 member?.Shipments.Add(shipment);
                 _unitOfWork.Shipments.Add(shipment);
                 return 2;
@@ -52,12 +52,12 @@ namespace BookSmart.Services
             return 0;
         }
 
-        public async Task<List<ShipmentFormViewModel>> ShipmentsByMemberId(int id)
+        public async Task<List<ShipmentFormDto>> ShipmentsByMemberId(int id)
         {
             var shipments = _unitOfWork.Shipments.GetShipments();
 
             return await shipments.Include(b => b.Book).Where(s => s.MemberId == id)
-                .Select(s => new ShipmentFormViewModel
+                .Select(s => new ShipmentFormDto
                 {
                     Id = s.Id,
                     BookId = s.BookId.ToString(),
@@ -74,15 +74,15 @@ namespace BookSmart.Services
         {
             return await _unitOfWork.Shipments.GetShipments()
                 .Include(s => s.Book)
-                .ThenInclude(b =>b.Genre)
+                .ThenInclude(b => b.Genre)
                 .Where(s => s.MemberId == id)
                 .ToListAsync();
         }
 
-        public async Task<ShipmentFormViewModel> ShipmentById(int id)
+        public async Task<ShipmentFormDto> ShipmentById(int id)
         {
             return await _unitOfWork.Shipments.GetShipment(id)
-                .Select(s => new ShipmentFormViewModel
+                .Select(s => new ShipmentFormDto
                 {
                     Id = s.Id,
                     BookId = s.BookId.ToString(),
@@ -98,7 +98,7 @@ namespace BookSmart.Services
         public async Task<int> DeleteShipment(int id)
         {
             var shipment = await _unitOfWork.Shipments.GetShipmentAsync(id);
-            if(shipment != null)
+            if (shipment != null)
             {
                 _unitOfWork.Shipments.Remove(shipment);
                 var member = await _unitOfWork.Members.GetMemberWithShipmentsAsync(shipment.MemberId);
@@ -111,13 +111,13 @@ namespace BookSmart.Services
         public async Task<int> ConfirmShipment(int id)
         {
             var shipment = await _unitOfWork.Shipments.GetShipmentAsync(id);
-            if(shipment != null)
+            if (shipment != null)
             {
                 shipment.IsConfirmed = true;
-                var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync(shipment.MemberId); 
-                if(member.MembershipType.Id != 1)
+                var member = await _unitOfWork.Members.GetMemberWithMembershipTypeAsync(shipment.MemberId);
+                if (member.MembershipType.Id != 1)
                 {
-                    if(member.BooksRemaining == 0)
+                    if (member.BooksRemaining == 0)
                     {
                         return -1;
                     }

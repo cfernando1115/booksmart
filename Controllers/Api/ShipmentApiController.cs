@@ -1,4 +1,5 @@
-﻿using BookSmart.Interfaces;
+﻿using BookSmart.Dtos;
+using BookSmart.Interfaces;
 using BookSmart.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,19 +34,19 @@ namespace BookSmart.Controllers.Api
         [HttpPost]
         [Route("SaveShipment")]
         [Authorize]
-        public async Task<ActionResult> SaveShipment(ShipmentFormViewModel shipmentModel)
+        public async Task<ActionResult> SaveShipment(ShipmentFormDto shipmentDto)
         {
             RequestResponse<int> requestResponse = new RequestResponse<int>();
 
             try
             {
-                requestResponse.Status = await _shipmentService.AddUpdateAsync(shipmentModel);
+                requestResponse.Status = await _shipmentService.AddUpdateAsync(shipmentDto);
 
-                if(requestResponse.Status == 1)
+                if (requestResponse.Status == 1)
                 {
                     requestResponse.Message = Utility.ResponseHelper.ShipmentUpdated;
                 }
-                if(requestResponse.Status == 2)
+                if (requestResponse.Status == 2)
                 {
                     requestResponse.Message = Utility.ResponseHelper.ShipmentAdded;
                 }
@@ -55,7 +56,7 @@ namespace BookSmart.Controllers.Api
                     await _unitOfWork.CompleteAsync();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 requestResponse.Message = ex.Message;
                 requestResponse.Status = Utility.ResponseHelper.FailureCode;
@@ -67,14 +68,14 @@ namespace BookSmart.Controllers.Api
         [Route("GetShipmentDataByMember")]
         public async Task<ActionResult> GetShipmentDataByMember(int memberId)
         {
-            RequestResponse<List<ShipmentFormViewModel>> requestResponse = new RequestResponse<List<ShipmentFormViewModel>>();
+            RequestResponse<List<ShipmentFormDto>> requestResponse = new RequestResponse<List<ShipmentFormDto>>();
 
             try
             {
                 requestResponse.Data = await _shipmentService.ShipmentsByMemberId(memberId);
                 requestResponse.Status = Utility.ResponseHelper.SuccessCode;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 requestResponse.Message = ex.Message;
                 requestResponse.Status = Utility.ResponseHelper.FailureCode;
@@ -86,14 +87,14 @@ namespace BookSmart.Controllers.Api
         [Route("GetShipmentById/{id}")]
         public async Task<ActionResult> GetShipmentById(int id)
         {
-            RequestResponse<ShipmentFormViewModel> requestResponse = new RequestResponse<ShipmentFormViewModel>();
+            RequestResponse<ShipmentFormDto> requestResponse = new RequestResponse<ShipmentFormDto>();
 
             try
             {
                 requestResponse.Data = await _shipmentService.ShipmentById(id);
                 requestResponse.Status = Utility.ResponseHelper.SuccessCode;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 requestResponse.Message = ex.Message;
                 requestResponse.Status = Utility.ResponseHelper.FailureCode;
@@ -113,12 +114,12 @@ namespace BookSmart.Controllers.Api
                     ? Utility.ResponseHelper.ShipmentDeleted
                     : Utility.ResponseHelper.ShipmentDeleteError;
 
-                if(_unitOfWork.HasChanges())
+                if (_unitOfWork.HasChanges())
                 {
                     await _unitOfWork.CompleteAsync();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 requestResponse.Status = Utility.ResponseHelper.FailureCode;
                 requestResponse.Message = ex.Message;
@@ -134,7 +135,7 @@ namespace BookSmart.Controllers.Api
             try
             {
                 var result = await _shipmentService.ConfirmShipment(id);
-                if(result > 0)
+                if (result > 0)
                 {
                     requestResponse.Status = result;
                     requestResponse.Message = Utility.ResponseHelper.ShipmentConfirmed;
@@ -146,14 +147,14 @@ namespace BookSmart.Controllers.Api
                 }
                 else
                 {
-                    requestResponse.Message = result == -1 
-                        ? Utility.ResponseHelper.ShipmentOverBooksRemainingError 
+                    requestResponse.Message = result == -1
+                        ? Utility.ResponseHelper.ShipmentOverBooksRemainingError
                         : Utility.ResponseHelper.ShipmentConfirmError;
 
                     requestResponse.Status = Utility.ResponseHelper.FailureCode;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 requestResponse.Status = Utility.ResponseHelper.FailureCode;
                 requestResponse.Message = ex.Message;

@@ -1,5 +1,4 @@
-﻿using BookSmart.Data;
-using BookSmart.Interfaces;
+﻿using BookSmart.Interfaces;
 using BookSmart.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,13 +25,13 @@ namespace BookSmart.Services
                 .Where(b => b.DateAdded >= date)
                 .CountAsync();
 
-            if(numberOfBooks != 0)
+            if (numberOfBooks != 0)
             {
                 var booksToTake = DetermineBooksToTake(numberOfBooks, maxNumberOfBooks);
 
                 return await books
                     .Where(b => b.DateAdded >= date)
-                    .Include(b=>b.Genre)
+                    .Include(b => b.Genre)
                     .Take(booksToTake)
                     .ToListAsync();
             }
