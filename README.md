@@ -2,10 +2,6 @@
 ## BookSmart
 *An online book retailer offering discounted pricing based on annual membership type*
 
-***
-### Version 1.0.0 of this project can be viewed [here](https://booksmartapp.azurewebsites.net/)
-***
-
 ### How It Works
 
 * A Member can register with one of four membership types
